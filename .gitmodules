@@ -1,0 +1,6 @@
+[submodule "hardware/lib/kicad-library"]
+	path = hardware/lib/kicad-library
+	url = https://github.com/arturo182/kicad-library.git
+[submodule "hardware/lib/kicad-modules"]
+	path = hardware/lib/kicad-modules
+	url = https://github.com/arturo182/kicad-modules.git
