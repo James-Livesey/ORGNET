@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "RP-RM2")(type "KiCad")(uri "${KIPRJMOD}/lib/RP-RM2")(options "")(descr ""))
+)
