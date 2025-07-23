@@ -60,8 +60,8 @@
       ],
       "drc_exclusions": [
         [
-          "lib_footprint_mismatch|181595000|92625000|84a21453-cfe3-48ee-9c1b-4afeee7153ce|00000000-0000-0000-0000-000000000000",
-          "Updated footprint to have slightly shorter silkscreen diagram and changed pin order to match schematic"
+          "lib_footprint_mismatch|152635000|116825000|84a21453-cfe3-48ee-9c1b-4afeee7153ce|00000000-0000-0000-0000-000000000000",
+          "Pins were reversed to match Psion pin layout, and silkscreen was slightly altered to avoid clipping board edge."
         ]
       ],
       "meta": {
