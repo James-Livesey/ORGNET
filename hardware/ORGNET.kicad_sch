@@ -5631,6 +5631,10 @@
 		(uuid "0d32bcaf-db63-45db-8d1a-023c1b8b58fb")
 	)
 	(no_connect
+		(at -22.86 -259.08)
+		(uuid "182c93ea-1dd4-49d8-a267-a95ed110a9f9")
+	)
+	(no_connect
 		(at 251.46 125.73)
 		(uuid "206fe217-b73d-4e8a-b396-6e7b67eda9b8")
 	)
@@ -5663,10 +5667,6 @@
 		(uuid "5b69ae7d-e821-417f-abe7-a95725fa85dd")
 	)
 	(no_connect
-		(at 186.69 71.12)
-		(uuid "69b940f4-55c4-4a0d-9635-443a048448bc")
-	)
-	(no_connect
 		(at 186.69 114.3)
 		(uuid "6c2ea6c0-1b4c-44df-87d5-d8e1df7a9c78")
 	)
@@ -5681,6 +5681,10 @@
 	(no_connect
 		(at 158.75 78.74)
 		(uuid "8295edb8-649e-4f02-b448-371f49ee6bc8")
+	)
+	(no_connect
+		(at 100.33 -163.83)
+		(uuid "8b097039-c5ef-420b-ad73-722ccc525bd2")
 	)
 	(no_connect
 		(at 186.69 109.22)
@@ -5701,6 +5705,10 @@
 	(no_connect
 		(at 186.69 104.14)
 		(uuid "d8d67aea-3aa8-4bd3-8e7e-d511711ac7df")
+	)
+	(no_connect
+		(at 186.69 73.66)
+		(uuid "f199c5bb-faeb-4244-bedb-df505f7af50d")
 	)
 	(no_connect
 		(at 186.69 106.68)
@@ -8084,28 +8092,6 @@
 			)
 		)
 	)
-	(global_label "RP_SCLK"
-		(shape input)
-		(at 186.69 73.66 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "80e38fa8-a07d-4426-b7e6-acbc2d941856")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 197.9604 73.66 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "SMR"
 		(shape input)
 		(at 59.69 139.7 0)
@@ -8339,6 +8325,28 @@
 		(uuid "ad381ca7-d325-416c-ac03-4bc9d5e6bc4d")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 195.6018 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "RP_SCLK"
+		(shape input)
+		(at 186.69 71.12 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b1db53d0-4273-4916-a27f-7ae560829369")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 197.9604 71.12 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9392,7 +9400,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 104.14 106.3752 0)
 			(effects
 				(font
@@ -9729,7 +9737,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 83.5152 45.72 0)
 			(effects
 				(font
@@ -9863,7 +9871,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 149.86 48.26 0)
 			(effects
 				(font
@@ -9931,7 +9939,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 53.34 121.6152 0)
 			(effects
 				(font
@@ -9998,7 +10006,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 137.16 129.54 0)
 			(effects
 				(font
@@ -10265,7 +10273,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 104.14 121.6152 0)
 			(effects
 				(font
@@ -10472,7 +10480,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 38.1 121.6152 0)
 			(effects
 				(font
@@ -10987,7 +10995,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 53.34 106.3752 0)
 			(effects
 				(font
@@ -11055,7 +11063,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 88.9 121.6152 0)
 			(effects
 				(font
@@ -11122,7 +11130,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 149.86 52.07 0)
 			(effects
 				(font
@@ -11400,7 +11408,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric_Pad0.72x0.64mm_HandSolder"
 			(at 84.582 180.34 90)
 			(effects
 				(font
@@ -11534,7 +11542,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 149.86 33.02 0)
 			(effects
 				(font
@@ -11874,7 +11882,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric_Pad0.72x0.64mm_HandSolder"
 			(at 73.152 180.34 90)
 			(effects
 				(font
@@ -12338,7 +12346,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 149.86 63.5 0)
 			(effects
 				(font
@@ -12474,7 +12482,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric_Pad0.72x0.64mm_HandSolder"
 			(at 204.978 36.83 90)
 			(effects
 				(font
@@ -12666,7 +12674,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 149.86 36.83 0)
 			(effects
 				(font
@@ -12934,7 +12942,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric_Pad0.72x0.64mm_HandSolder"
 			(at 27.432 180.34 90)
 			(effects
 				(font
@@ -13002,7 +13010,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric_Pad0.72x0.64mm_HandSolder"
 			(at 189.23 30.988 90)
 			(effects
 				(font
@@ -13469,7 +13477,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 149.86 40.64 0)
 			(effects
 				(font
@@ -13603,7 +13611,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 149.86 44.45 0)
 			(effects
 				(font
@@ -13807,7 +13815,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 111.4552 45.72 0)
 			(effects
 				(font
@@ -13875,7 +13883,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric_Pad0.72x0.64mm_HandSolder"
 			(at 251.46 116.332 90)
 			(effects
 				(font
@@ -14299,7 +14307,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric_Pad0.72x0.64mm_HandSolder"
 			(at 150.622 96.52 90)
 			(effects
 				(font
@@ -14435,7 +14443,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric_Pad0.72x0.64mm_HandSolder"
 			(at 269.748 134.62 90)
 			(effects
 				(font
@@ -14635,7 +14643,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 149.86 55.88 0)
 			(effects
 				(font
@@ -14769,7 +14777,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 137.16 121.92 0)
 			(effects
 				(font
@@ -15039,7 +15047,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric_Pad0.64x0.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
 			(at 149.86 81.28 0)
 			(effects
 				(font

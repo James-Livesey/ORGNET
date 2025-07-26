@@ -60,8 +60,36 @@
       ],
       "drc_exclusions": [
         [
+          "copper_edge_clearance|142715000|79850000|6f4cfb0d-1329-48e3-aada-3a21d87d2627|f04b4b88-bf7b-4653-aaab-5df03a617b40",
+          "Debug header mounting pad close to board."
+        ],
+        [
+          "copper_edge_clearance|142715000|84450000|6f4cfb0d-1329-48e3-aada-3a21d87d2627|638292fe-a894-4295-8065-cc8668af6a44",
+          "Debug header mounting pad close to board."
+        ],
+        [
+          "copper_edge_clearance|162290000|108762500|4a8fffad-03cf-485a-a2f9-715253cb6591|d1de0e27-35f8-440e-a831-20d768522a7d",
+          "Pad is close to side notch."
+        ],
+        [
+          "copper_edge_clearance|162408785|110268598|4e3f1555-2750-422b-b3f0-bbdfc3431599|c488a197-a761-4325-94a3-5041c6708f05",
+          "Header pin close to notch."
+        ],
+        [
           "lib_footprint_mismatch|152635000|116825000|84a21453-cfe3-48ee-9c1b-4afeee7153ce|00000000-0000-0000-0000-000000000000",
           "Pins were reversed to match Psion pin layout, and silkscreen was slightly altered to avoid clipping board edge."
+        ],
+        [
+          "silk_over_copper|142666015|98389095|065b3085-8760-430d-baae-d05fd833415f|00000000-0000-0000-0000-000000000000",
+          ""
+        ],
+        [
+          "silk_over_copper|162442854|101025354|05f84bea-808e-4d9e-a5d3-999c3b3fb118|00000000-0000-0000-0000-000000000000",
+          ""
+        ],
+        [
+          "silk_overlap|153300000|101072500|413f42dd-06fc-485f-b2aa-d2fcf05de6db|71c90417-7fd9-46ef-a08b-317ccca7e5a4",
+          ""
         ]
       ],
       "meta": {
