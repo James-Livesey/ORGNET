@@ -21,3 +21,7 @@ hardware/*.ses
 hardware/*.xml
 hardware/*.csv
 hardware/#auto_saved_files#
+
+# Firmware
+
+firmware/build

@@ -4,3 +4,9 @@
 [submodule "hardware/lib/kicad-modules"]
 	path = hardware/lib/kicad-modules
 	url = https://github.com/arturo182/kicad-modules.git
+[submodule "firmware/lib/pico-sdk"]
+	path = firmware/lib/pico-sdk
+	url = https://github.com/raspberrypi/pico-sdk.git
+[submodule "firmware/lib/picotool"]
+	path = firmware/lib/picotool
+	url = https://github.com/raspberrypi/picotool.git
