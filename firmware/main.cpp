@@ -5,6 +5,7 @@
 
 #include "datapack.h"
 #include "asmtest.h"
+#include "_app.h"
 
 void stepper() {
     while (true) {
@@ -15,7 +16,7 @@ void stepper() {
 int main() {
     stdio_init_all();
 
-    Datapack::the()->loadCode(asmTestCode, sizeof(asmTestCode));
+    Datapack::the()->loadCode((char*)appCode, appCode_len);
 
     set_sys_clock_khz(260'000, true);
     irq_set_mask_enabled(0x0F, false);

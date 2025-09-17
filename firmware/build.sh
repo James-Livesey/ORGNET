@@ -4,6 +4,13 @@ set -e
 
 mkdir -p build/picotool-local
 
+if [ ! -f ../app/main.bin ]; then
+    echo "Application not assembled yet; please assemble it first using app/build.sh"
+    exit 1
+fi
+
+xxd -n appCode -i ../app/main.bin > _app.h
+
 pushd build
     if [ ! -f picotool-local/picotool ]; then
         pushd picotool-local

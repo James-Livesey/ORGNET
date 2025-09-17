@@ -25,3 +25,16 @@ hardware/#auto_saved_files#
 # Firmware
 
 firmware/build
+firmware/_*
+
+# Application
+
+app/*.hex
+app/*.bin
+app/*.dbg
+app/*.lst
+app/*.lst.short
+app/*.mac
+app/*.opl_*
+app/*.opk
+app/*.rom

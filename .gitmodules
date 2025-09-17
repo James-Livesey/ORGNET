@@ -10,3 +10,9 @@
 [submodule "firmware/lib/picotool"]
 	path = firmware/lib/picotool
 	url = https://github.com/raspberrypi/picotool.git
+[submodule "app/toolchain/Psiora"]
+	path = app/toolchain/Psiora
+	url = https://github.com/James-Livesey/Psiora.git
+[submodule "app/toolchain/psion-org2-assembler"]
+	path = app/toolchain/psion-org2-assembler
+	url = https://github.com/James-Livesey/psion-org2-assembler.git
