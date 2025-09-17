@@ -1,6 +1,6 @@
 ; Display ORGNET logo to screen.
-; INPUTS:       None
-; OUTPUTS:      None
+; INPUT:       None
+; OUTPUT:      None
 ;               D = Trashed
 ;               X = Trashed
 logo_show:
@@ -28,8 +28,8 @@ logo_show:
         rts
 
 ; Set up user-defined graphics for custom characters used in logo.
-; INPUTS:       None
-; OUTPUTS:      None
+; INPUT:       None
+; OUTPUT:      None
 ;               D = Trashed
 ;               X = Trashed
 logo_udg_setup:
