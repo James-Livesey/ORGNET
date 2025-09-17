@@ -5,8 +5,8 @@
 .ORG $241B-25
 
 xx:
-	.BYTE	$6A		; Bootable
-	.BYTE	$01		; Size 8K
+	.BYTE	$6E		; Bootable
+	.BYTE	$04		; Size 32K
 	.BYTE	$00		; Code only
 	.BYTE	$41		; Device number
 	.BYTE	$10		; Version 1.0
@@ -37,16 +37,11 @@ vec:
 endvec:
 
 item:
-	.ASCIC	"HELLO"
+	.ASCIC	"NETCFG"
 	.WORD	main
 
 install:
-	ldaa	#$0C		; Clear screen
-	os	dp$emit
-
-	ldab	install_msg	; Print install message to screen
-	ldx	#install_msg+1
-	os	dp$prnt
+	jsr	logo_show	; Show ORGNET logo
 
 	clra			; Clear high byte of D for menu item length
 	ldab	item		; Set low byte of D to length of item name
@@ -55,16 +50,13 @@ install:
 	ldx	#item
 	ldd	#rtb_bl
 	os	ut$cpyb		; Copy item to runtime buffer, length utw_s0
-	ldab	#0		; Position in menu ($FF for end)
+	ldab	#$FF		; Position in menu ($FF for end)
 	os	tl$addi		; Add item to main menu
 
 	os	kb$getk		; Wait for keypress
 
 	clc			; Return success signal
 	rts
-
-install_msg:
-	.ASCIC	"Install vector"
 
 remove:
 	ldaa	#$0C		; Clear screen
@@ -98,7 +90,10 @@ main:
 	rts			; Exit main program
 
 hello_msg:
-	.ASCIC	"Hello from      ORGNET!"
+	.ASCIC	"Network config  goes here"
+
+.INCLUDE udg.inc
+.INCLUDE logo.inc
 
 .EOVER
 

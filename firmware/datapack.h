@@ -51,6 +51,7 @@ class Datapack {
         size_t getAddress();
         Edge getStateChange(size_t index);
         void loadCode(const char* code, size_t length);
+        void reportInfo();
 
     private:
         DataBus _pins;
@@ -66,6 +67,9 @@ class Datapack {
         std::array<char, 32 * 1024> _data;
         unsigned char _mainCounter = 0;
         unsigned char _pageCounter = 0;
+
+        unsigned char _lastMainCounter = 0;
+        unsigned char _lastPageCounter = 0;
 };
 
 #endif

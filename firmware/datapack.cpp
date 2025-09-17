@@ -104,9 +104,18 @@ void Datapack::setDataValue(char value) {
     _forceWrite = false;
     _lastValue = value;
 
+    unsigned long pinState = 0;
+
     for (size_t i = 0; i < 8; i++) {
-        gpio_put(_pins[i], value & (1 << i));
+        if (!(value & (1 << i))) {
+            continue;
+        }
+
+        pinState |= (1 << _pins[i]);
     }
+
+    sio_hw->gpio_clr = ~(pinState);
+    sio_hw->gpio_out = pinState;
 }
 
 size_t Datapack::getAddress() {

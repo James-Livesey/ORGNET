@@ -4,7 +4,6 @@
 #include "hardware/clocks.h"
 
 #include "datapack.h"
-#include "asmtest.h"
 #include "_app.h"
 
 void stepper() {
@@ -18,11 +17,10 @@ int main() {
 
     Datapack::the()->loadCode((char*)appCode, appCode_len);
 
-    set_sys_clock_khz(260'000, true);
     irq_set_mask_enabled(0x0F, false);
     multicore_launch_core1(stepper);
 
-    while (true) {}    
+    while (true) {}
 
     return 0;
 }
