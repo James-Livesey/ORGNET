@@ -1,3 +1,6 @@
+; LOGO RENDERER
+; Subroutines used to draw the ORGNET logo to the screen.
+
 ; Display ORGNET logo to screen.
 ; INPUT:	None
 ; OUTPUT:	None

@@ -1,3 +1,7 @@
+; USER-DEFINED GRAPHICS
+; Allows user-defined graphics (UDGs) to be redefined to display custom
+; graphical characters.
+
 ; Set a user-defined graphic for character A from the bitmap provided in X.
 ; INPUT:	A = ASCII character of user-defined graphic (0-7)
 ; 		X = Index pointing to start of bitmap (8 bytes)

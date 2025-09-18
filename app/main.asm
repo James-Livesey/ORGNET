@@ -43,6 +43,11 @@ item:
 install:
 	jsr	logo_show	; Show ORGNET logo
 
+	ldaa	kbb_pkof	; Prevent auto pack switch-off
+	staa	old_kbb_pkof
+	ldaa	#0
+	staa	kbb_pkof
+
 	clra			; Clear high byte of D for menu item length
 	ldab	item		; Set low byte of D to length of item name
 	addb	#3		; Increase length to include address pointer
@@ -69,6 +74,9 @@ remove:
 	ldx	#item		; Remove item from main menu
 	os	tl$deli
 
+	ldaa	old_kbb_pkof	; Restore auto pack switch-off behaviour
+	staa	kbb_pkof
+
 	os	kb$getk		; Wait for keypress
 
 	clc			; Return success signal
@@ -91,6 +99,9 @@ main:
 
 hello_msg:
 	.ASCIC	"Network config  goes here"
+
+old_kbb_pkof:
+	.BYTE 0
 
 .INCLUDE udg.inc
 .INCLUDE logo.inc

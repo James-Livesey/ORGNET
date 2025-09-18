@@ -12,7 +12,7 @@ file(GLOB SOURCES
 
 add_executable(orgnet ${SOURCES})
 
-target_link_libraries(orgnet pico_stdlib pico_multicore)
+target_link_libraries(orgnet pico_stdlib pico_multicore pico_cyw43_arch_none)
 
 pico_enable_stdio_usb(orgnet 1)
 pico_enable_stdio_uart(orgnet 0)
