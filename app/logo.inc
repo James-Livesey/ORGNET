@@ -1,10 +1,10 @@
 ; Display ORGNET logo to screen.
 ; INPUT:       None
 ; OUTPUT:      None
-;               D = Trashed
-;               X = Trashed
+; 		D = Trashed
+; 		X = Trashed
 logo_show:
-	jsr	logo_udg_setup  ; Set up user-defined graphics first
+	jsr	logo_udg_setup	; Set up user-defined graphics first
 
         ldaa	#$0C		; Clear screen
 	os	dp$emit
@@ -28,10 +28,10 @@ logo_show:
         rts
 
 ; Set up user-defined graphics for custom characters used in logo.
-; INPUT:       None
-; OUTPUT:      None
-;               D = Trashed
-;               X = Trashed
+; INPUT:	None
+; OUTPUT:	None
+; 		D = Trashed
+; 		X = Trashed
 logo_udg_setup:
 	ldaa	#0
 	ldx	#logo_udg_0

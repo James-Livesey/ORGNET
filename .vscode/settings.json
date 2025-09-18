@@ -1,5 +1,11 @@
 {
     "files.associations": {
-        "array": "cpp"
+        "array": "cpp",
+        "*.asm": "platformio-debug.asm",
+        "*.inc": "platformio-debug.asm"
+    },
+    "[platformio-debug.asm]": {
+        "editor.tabSize": 8,
+        "editor.insertSpaces": false
     }
 }
