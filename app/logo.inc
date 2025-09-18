@@ -1,6 +1,6 @@
 ; Display ORGNET logo to screen.
-; INPUT:       None
-; OUTPUT:      None
+; INPUT:	None
+; OUTPUT:	None
 ; 		D = Trashed
 ; 		X = Trashed
 logo_show:
