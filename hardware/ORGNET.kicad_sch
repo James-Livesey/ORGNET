@@ -11104,7 +11104,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "1u"
+		(property "Value" "3.3u"
 			(at 153.67 74.9299 0)
 			(effects
 				(font
@@ -11113,7 +11113,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Inductor_SMD:L_1008_2520Metric_Pad1.43x2.20mm_HandSolder"
+		(property "Footprint" "Inductor_SMD:L_1210_3225Metric_Pad1.42x2.65mm_HandSolder"
 			(at 152.4 73.66 0)
 			(effects
 				(font
