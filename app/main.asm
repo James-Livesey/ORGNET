@@ -5,15 +5,14 @@
 .ORG $241B-25
 
 xx:
-	.BYTE	$6E		; Bootable
+	.BYTE	$6C		; Bootable; paged; RAM-based
 	.BYTE	$04		; Size 32K
 	.BYTE	$00		; Code only
 	.BYTE	$41		; Device number
 	.BYTE	$10		; Version 1.0
 	.BYTE	$41		; Priority
 	.WORD	%root-%xx	; Device overlay address
-	.BYTE	$FF
-	.BYTE	$FF
+	.WORD	int(0x6C04+0x0041+0x1041+%root-%xx)	; Checksum
 	.BYTE	$09
 	.BYTE	$81
 	.ASCII	"MAIN    "
