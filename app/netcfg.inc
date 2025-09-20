@@ -11,16 +11,72 @@ netcfg_item:
 ;		D = Trashed
 ;		X = Trashed
 netcfg_main:
+	ldx	#netcfg_menu
+	ldd	#$1001
+	os	mn$disp		; Open main menu
+
+	cmpb	#1		; Exit if ON is pressed
+	beq	netcfg_main_exit
+
+	jsr	0,x		; Otherwise, visit selected area
+
+	bra	netcfg_main
+
+netcfg_main_exit:
+	rts			; Exit application
+
+netcfg_menu:
+	.ASCIC	"WIFI"
+	.WORD	netcfg_wifi
+	.ASCIC	"APPS"
+	.WORD	netcfg_apps
+	.ASCIC	"ABOUT"
+	.WORD	netcfg_about
+	.BYTE	$00
+
+; Displays Wi-Fi configuration options.
+; INPUT:	None
+; OUTPUT:	None
+netcfg_wifi:
+	rts
+
+; Displays options to configure which built-in ORGNET apps are shown.
+; INPUT:	None
+; OUTPUT:	None
+netcfg_apps:
+	rts
+
+; Displays about information.
+; INPUT:	None
+; OUTPUT:	None
+;		D = Trashed
+;		X = Trashed
+netcfg_about:
 	ldaa	#$0C		; Clear screen
 	os	dp$emit
 
-	ldab	netcfg_msg	; Print hello message to screen
-	ldx	#netcfg_msg+1
-	os	dp$prnt
+	ldab	netcfg_about_msg1
+	ldx	#netcfg_about_msg1+1
+	os	dp$prnt		; Print message to screen
+
+	os	kb$getk		; Wait for keypress; exit if ON is pressed
+	cmpb	#1
+	beq	netcfg_about_exit
+
+	ldaa	#$0C		; Clear screen
+	os	dp$emit
+
+	ldab	netcfg_about_msg2
+	ldx	#netcfg_about_msg2+1
+	os	dp$prnt		; Print message to screen
 
 	os	kb$getk		; Wait for keypress
 
-	rts			; Exit application
+netcfg_about_exit:
+	rts			; Exit area
 
-netcfg_msg:
-	.ASCIC	"Network config  goes here"
+netcfg_about_msg1:
+	.ASCIC	"ORGNET FW V1.0  orgnet.jamesl.me"
+
+netcfg_about_msg2:
+	.ASCIC	"C Copyright 2025James Livesey"
