@@ -35,10 +35,6 @@ vec:
 	.WORD	remove
 endvec:
 
-item:
-	.ASCIC	"NETCFG"
-	.WORD	main
-
 install:
 	jsr	logo_show	; Show ORGNET logo
 
@@ -47,15 +43,8 @@ install:
 	ldaa	#0
 	staa	kbb_pkof
 
-	clra			; Clear high byte of D for menu item length
-	ldab	item		; Set low byte of D to length of item name
-	addb	#3		; Increase length to include address pointer
-	std	utw_s0		; Store length in general word variable
-	ldx	#item
-	ldd	#rtb_bl
-	os	ut$cpyb		; Copy item to runtime buffer, length utw_s0
-	ldab	#$FF		; Position in menu ($FF for end)
-	os	tl$addi		; Add item to main menu
+	ldx	#netcfg_item	; Add NETCFG item to top-level menu
+	jsr	tl_add
 
 	os	kb$getk		; Wait for keypress
 
@@ -70,8 +59,8 @@ remove:
 	ldx	#remove_msg+1
 	os	dp$prnt
 
-	ldx	#item		; Remove item from main menu
-	os	tl$deli
+	ldx	#netcfg_item	; Remove NETCFG item from main menu
+	jsr	tl_remove
 
 	ldaa	old_kbb_pkof	; Restore auto pack switch-off behaviour
 	staa	kbb_pkof
@@ -84,26 +73,13 @@ remove:
 remove_msg:
 	.ASCIC	"Remove vector"
 
-main:
-	ldaa	#$0C		; Clear screen
-	os	dp$emit
-
-	ldab	hello_msg	; Print hello message to screen
-	ldx	#hello_msg+1
-	os	dp$prnt
-
-	os	kb$getk		; Wait for keypress
-
-	rts			; Exit main program
-
-hello_msg:
-	.ASCIC	"Network config  goes here"
-
 old_kbb_pkof:
 	.BYTE 0
 
 .INCLUDE udg.inc
 .INCLUDE logo.inc
+.INCLUDE tlmenu.inc
+.INCLUDE netcfg.inc
 
 .EOVER
 
