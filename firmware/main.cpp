@@ -20,7 +20,9 @@ int main() {
     irq_set_mask_enabled(0x0F, false);
     multicore_launch_core1(stepper);
 
-    while (true) {}
+    while (true) {
+        Datapack::the()->reportInfo();
+    }
 
     return 0;
 }

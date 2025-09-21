@@ -23,6 +23,8 @@
 #define HIGH 1
 #define LOW 0
 
+#define PACK_COMMS_LOCATION 0x2000
+
 typedef int Pin;
 typedef std::array<Pin, 13> DataBus;
 
@@ -68,8 +70,8 @@ class Datapack {
         unsigned char _mainCounter = 0;
         unsigned char _pageCounter = 0;
 
-        unsigned char _lastMainCounter = 0;
-        unsigned char _lastPageCounter = 0;
+        bool _addressChanged = false;
+        bool _commsBufferWrittenTo = false;
 };
 
 #endif

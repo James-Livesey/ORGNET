@@ -37,12 +37,14 @@ void Datapack::step() {
     if (_state[SMR] == HIGH) {
         _mainCounter = 0;
         _pageCounter = 0;
+        _addressChanged = true;
 
         return;
     }
 
     if (getStateChange(SCLK) == Edge::FALLING) {
         _mainCounter += 2;
+        _addressChanged = true;
     }
 
     if (getStateChange(SPGM_B) == Edge::FALLING) {
@@ -51,10 +53,20 @@ void Datapack::step() {
         if (_pageCounter >= _data.size() >> 8) {
             _pageCounter = 0;
         }
+
+        _addressChanged = true;
     }
 
     if (_state[SOE_B] == HIGH) {
         _data[getAddress()] = getDataValue();
+
+        if (
+            getAddress() >= PACK_COMMS_LOCATION &&
+            getAddress() <= PACK_COMMS_LOCATION + 0xFF &&
+            _data[getAddress()] == '\0'
+        ) {
+            _commsBufferWrittenTo = true;
+        }
     }
 }
 
@@ -132,4 +144,38 @@ Edge Datapack::getStateChange(size_t index) {
 
 void Datapack::loadCode(const char* code, size_t length) {
     std::copy(code, code + length, std::begin(_data));
+
+    size_t spacerRecordLength = PACK_COMMS_LOCATION - length - 8;
+
+    // Spacer record
+    _data[length++] = 0x02;
+    _data[length++] = 0x80;
+    _data[length++] = (spacerRecordLength & 0xFF00) >> 8;
+    _data[length++] = spacerRecordLength & 0xFF;
+    length += spacerRecordLength;
+
+    _data[length++] = 0x02;
+    _data[length++] = 0x80;
+    _data[length++] = 0x00;
+    _data[length++] = 0xFF;
+
+    _data[length++] = 0x7F; // Indicate that comms record is present
+}
+
+void Datapack::reportInfo() {
+    if (_addressChanged) {
+        printf("Address changed: 0x%04x = 0x%02x\n", getAddress(), _data[getAddress()]);
+
+        _addressChanged = false;
+    }
+
+    if (_commsBufferWrittenTo) {
+        char message[256];
+
+        std::copy(_data.begin() + PACK_COMMS_LOCATION, _data.begin() + PACK_COMMS_LOCATION + 256, message);
+
+        printf("Comms buffer written to: \"%s\"\n", message);
+
+        _commsBufferWrittenTo = false;
+    }
 }

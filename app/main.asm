@@ -36,12 +36,23 @@ vec:
 endvec:
 
 install:
-	jsr	logo_show	; Show ORGNET logo
+	jsr	comms_init
+	bcs	install_ret	; Return error if comms could not init
+
+	jsr	comms_begin	; Say hello over the comms buffer
+	bcs	install_ret
+	ldab	hello_buffer
+	incb
+	ldx	#hello_buffer+1
+	jsr	comms_write
+	bcs	install_ret
 
 	ldaa	kbb_pkof	; Prevent auto pack switch-off
 	staa	old_kbb_pkof
 	ldaa	#0
 	staa	kbb_pkof
+
+	jsr	logo_show	; Show ORGNET logo
 
 	ldx	#netcfg_item	; Add NETCFG item to top-level menu
 	jsr	tl_add
@@ -49,7 +60,13 @@ install:
 	os	kb$getk		; Wait for keypress
 
 	clc			; Return success signal
+
+install_ret:
 	rts
+
+hello_buffer:
+	.ASCIC	"Hello from the Psion! :)"
+	.BYTE	$00
 
 remove:
 	ldaa	#$0C		; Clear screen
@@ -76,6 +93,7 @@ remove_msg:
 old_kbb_pkof:
 	.BYTE 0
 
+.INCLUDE comms.inc
 .INCLUDE udg.inc
 .INCLUDE logo.inc
 .INCLUDE tlmenu.inc
