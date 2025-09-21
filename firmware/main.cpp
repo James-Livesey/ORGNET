@@ -4,7 +4,10 @@
 #include "hardware/clocks.h"
 
 #include "datapack.h"
+#include "cmd.h"
 #include "_app.h"
+
+Datapack* datapack;
 
 void stepper() {
     while (true) {
@@ -15,13 +18,24 @@ void stepper() {
 int main() {
     stdio_init_all();
 
-    Datapack::the()->loadCode((char*)appCode, appCode_len);
+    datapack = Datapack::the();
+
+    datapack->loadCode((char*)appCode, appCode_len);
 
     irq_set_mask_enabled(0x0F, false);
     multicore_launch_core1(stepper);
 
     while (true) {
-        Datapack::the()->reportInfo();
+        if (datapack->hasAvailableCommand()) {
+            sleep_ms(10);
+
+            CommsBuffer buffer = datapack->getCommsBuffer();
+
+            processCommand(&buffer);
+            datapack->setCommsBuffer(&buffer);
+        }
+
+        tight_loop_contents();
     }
 
     return 0;

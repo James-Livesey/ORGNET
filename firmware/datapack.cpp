@@ -58,14 +58,19 @@ void Datapack::step() {
     }
 
     if (_state[SOE_B] == HIGH) {
-        _data[getAddress()] = getDataValue();
+        size_t address = getAddress();
 
-        if (
-            getAddress() >= PACK_COMMS_LOCATION &&
-            getAddress() <= PACK_COMMS_LOCATION + 0xFF &&
-            _data[getAddress()] == '\0'
+        _data[address] = getDataValue();
+
+        if (address == PACK_COMMS_LOCATION) {
+            _commsBufferRemainingLength = _data[address];
+        } else if (
+            _commsBufferRemainingLength != 0x00 &&
+            _commsBufferRemainingLength != 0xFF &&
+            address >= PACK_COMMS_LOCATION + 0x01 &&
+            address <= PACK_COMMS_LOCATION + 0xFF
         ) {
-            _commsBufferWrittenTo = true;
+            _commsBufferRemainingLength--;
         }
     }
 }
@@ -162,20 +167,28 @@ void Datapack::loadCode(const char* code, size_t length) {
     _data[length++] = 0x7F; // Indicate that comms record is present
 }
 
-void Datapack::reportInfo() {
-    if (_addressChanged) {
-        printf("Address changed: 0x%04x = 0x%02x\n", getAddress(), _data[getAddress()]);
+bool Datapack::hasAvailableCommand() {
+    bool result = _commsBufferRemainingLength == 0;
 
-        _addressChanged = false;
+    if (result) {
+        _commsBufferRemainingLength = -1;
     }
 
-    if (_commsBufferWrittenTo) {
-        char message[256];
+    return result;
+}
 
-        std::copy(_data.begin() + PACK_COMMS_LOCATION, _data.begin() + PACK_COMMS_LOCATION + 256, message);
+CommsBuffer Datapack::getCommsBuffer() {
+    CommsBuffer result;
 
-        printf("Comms buffer written to: \"%s\"\n", message);
+    std::copy(_data.begin() + PACK_COMMS_LOCATION, _data.begin() + PACK_COMMS_LOCATION + 256, result.begin());
 
-        _commsBufferWrittenTo = false;
-    }
+    return result;
+}
+
+void Datapack::setCommsBuffer(CommsBuffer* buffer) {
+    _data[PACK_COMMS_LOCATION] = 0x00;
+
+    std::copy(buffer->begin() + 1, buffer->end(), _data.begin() + PACK_COMMS_LOCATION + 1);
+
+    _data[PACK_COMMS_LOCATION] = (*buffer)[0];
 }

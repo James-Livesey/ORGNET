@@ -43,7 +43,7 @@ install:
 	bcs	install_ret
 	ldab	hello_buffer
 	incb
-	ldx	#hello_buffer+1
+	ldx	#hello_buffer
 	jsr	comms_write
 	bcs	install_ret
 
@@ -65,8 +65,7 @@ install_ret:
 	rts
 
 hello_buffer:
-	.ASCIC	"Hello from the Psion! :)"
-	.BYTE	$00
+	.ASCIC	"HELLO "
 
 remove:
 	ldaa	#$0C		; Clear screen

@@ -27,6 +27,7 @@
 
 typedef int Pin;
 typedef std::array<Pin, 13> DataBus;
+typedef std::array<char, 256> CommsBuffer;
 
 enum Edge {
     NONE = 0,
@@ -53,7 +54,9 @@ class Datapack {
         size_t getAddress();
         Edge getStateChange(size_t index);
         void loadCode(const char* code, size_t length);
-        void reportInfo();
+        bool hasAvailableCommand();
+        CommsBuffer getCommsBuffer();
+        void setCommsBuffer(CommsBuffer* buffer);
 
     private:
         DataBus _pins;
@@ -69,9 +72,9 @@ class Datapack {
         std::array<char, 32 * 1024> _data;
         unsigned char _mainCounter = 0;
         unsigned char _pageCounter = 0;
+        unsigned char _commsBufferRemainingLength = -1;
 
         bool _addressChanged = false;
-        bool _commsBufferWrittenTo = false;
 };
 
 #endif
