@@ -1,6 +1,9 @@
 ; CONFIGURATION APPLICATION
 ; Configures various settings for ORGNET. Shown as 'NETCFG' on top-level menu.
 
+WISTATUS_DISCON	.EQU	$00
+WISTATUS_CON	.EQU	$01
+
 netcfg_item:
 	.ASCIC	"NETCFG"
 	.WORD	netcfg_main
@@ -37,8 +40,63 @@ netcfg_menu:
 ; Displays Wi-Fi configuration options.
 ; INPUT:	None
 ; OUTPUT:	None
+;		D = Trashed
+;		X = Trashed
 netcfg_wifi:
+	ldaa	#$0C		; Clear screen
+	os	dp$emit
+
+	ldaa	netcfg_wistatus	; Show disconnected message if disconnected
+	cmpa	#0
+	beq	netcfg_widiscon
+
+	ldab	netcfg_wissid_disp
+	ldx	#netcfg_wissid_disp+1
+	os	dp$prnt		; Print SSID to screen
+
+	ldaa	#16		; Set cursor pos on second line
+	clrb
+	os	dp$stat
+
+	ldx	#netcfg_wistatus_msgs
+	ldab	netcfg_wistatus
+	abx			; Add status index as word offset to table
+	abx
+	ldx	0,x		; Load address pointed to by table entry
+	ldab	0,x		; Get status message length
+	inx			; Skip over count byte in string
+	os	dp$prnt		; Print current status message to screen
+
+	bra	netcfg_wifi_poll
+
+netcfg_widiscon:
+	ldab	netcfg_widiscon_msg
+	ldx	#netcfg_widiscon_msg+1
+	os	dp$prnt		; Print disconnected message to screen
+
+netcfg_wifi_poll:
+	os	kb$getk		; Get key
+	; TODO: Poll keyboard instead to periodically update Wi-Fi status
+
 	rts
+
+netcfg_widiscon_msg:
+	.ASCIC	"DISCONNECTED    press MODE key"
+
+; SSID display - length limited to 15 chars (first byte is char count)
+netcfg_wissid_disp:
+	.BLKB	16
+
+netcfg_wistatus:
+	.BYTE	WISTATUS_DISCON
+
+netcfg_wistatus_con_msg:
+	.ASCIC	"CONNECTED"
+
+; Wi-Fi status message table to be indexed into using netcfg_wistatus
+netcfg_wistatus_msgs:
+	.WORD	$0000
+	.WORD	netcfg_wistatus_con_msg
 
 ; Displays options to configure which built-in ORGNET apps are shown.
 ; INPUT:	None
