@@ -4,7 +4,10 @@ std::vector<Command> availableCommands = {
     Command("HELLO", []() -> CommsBuffer {
         printf("HELLO command called\n");
 
-        return stringBuffer(0, "Hello, world!");
+        return stringBuffer(ReturnCode::SUCCESS, "Hello, world!");
+    }),
+    Command("WISTAT", []() -> CommsBuffer {
+        return stringBuffer(ReturnCode::SUCCESS, "\x01\x03" "Test Network");
     })
 };
 
@@ -36,7 +39,7 @@ void processCommand(CommsBuffer* buffer) {
     }
 }
 
-CommsBuffer stringBuffer(char returnCode, std::string data) {
+CommsBuffer stringBuffer(ReturnCode returnCode, std::string data) {
     CommsBuffer buffer;
 
     buffer.fill(0x00);

@@ -9,6 +9,11 @@
 
 typedef std::function<CommsBuffer()> CommandCallback;
 
+enum ReturnCode {
+    SUCCESS = 1,
+    ERROR = 2
+};
+
 class Command {
     public:
         Command(std::string name, CommandCallback callback);
@@ -25,6 +30,6 @@ extern std::vector<Command> availableCommands;
 
 void processCommand(CommsBuffer* buffer);
 
-CommsBuffer stringBuffer(char returnCode, std::string data);
+CommsBuffer stringBuffer(ReturnCode returnCode, std::string data);
 
 #endif

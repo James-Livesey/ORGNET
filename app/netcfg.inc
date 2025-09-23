@@ -43,6 +43,35 @@ netcfg_menu:
 ;		D = Trashed
 ;		X = Trashed
 netcfg_wifi:
+	jsr	comms_begin	; Begin comms to check Wi-Fi status
+	bcs	netcfg_wifi_err
+
+	ldab	netcfg_wistat_cmd
+	incb
+	ldx	#netcfg_wistat_cmd
+	jsr	comms_write	; Invoke WISTAT command
+
+	jsr	comms_wait	; Wait for reply and store SSID length from A
+	bcs	netcfg_wifi_err
+	decb			; Discount connection status byte in length
+	decb			; Discount signal strength byte in length
+	andb	#$0F		; Limit length to 15 chars to fit buffer
+	stab	netcfg_wissid_disp
+
+	jsr	comms_read_byte	; Store connection status
+	bcs	netcfg_wifi_err
+	stab	netcfg_wistatus
+
+	jsr	comms_read_byte	; Store connection strength
+	bcs	netcfg_wifi_err
+	stab	netcfg_wistrength
+
+	ldab	netcfg_wissid_disp
+	ldx	#netcfg_wissid_disp+1
+	jsr	comms_read	; Read SSID into its buffer
+	bcs	netcfg_wifi_err
+
+netcfg_wifi_draw:
 	ldaa	#$0C		; Clear screen
 	os	dp$emit
 
@@ -80,6 +109,12 @@ netcfg_wifi_poll:
 
 	rts
 
+netcfg_wifi_err:
+	error	ERROR_COMMS
+
+netcfg_wistat_cmd:
+	.ASCIC	"WISTAT "
+
 netcfg_widiscon_msg:
 	.ASCIC	"DISCONNECTED    press MODE key"
 
@@ -97,6 +132,9 @@ netcfg_wistatus_con_msg:
 netcfg_wistatus_msgs:
 	.WORD	$0000
 	.WORD	netcfg_wistatus_con_msg
+
+netcfg_wistrength:
+	.BYTE	$00
 
 ; Displays options to configure which built-in ORGNET apps are shown.
 ; INPUT:	None

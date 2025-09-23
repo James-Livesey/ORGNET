@@ -69,7 +69,7 @@ comms_begin:
 
 	clrb			; Return error if error when reading from pack
 	cmpb	#0
-	bne	comms_err
+	bne	comms_begin_err
 
 	clrb			; Set pack address back to start
 	ldx	#COMMS_LOCATION
@@ -79,6 +79,10 @@ comms_begin:
 	staa	comms_cur
 
 	clc			; Return success signal
+	rts
+
+comms_begin_err:
+	sec			; Return error signal
 	rts
 
 ; Read bytes from the comms buffer at the current cursor location.
@@ -92,7 +96,7 @@ comms_read:
 	ldaa	comms_cur
 	inca
 	aba
-	bcs	comms_err	; (B + comms_cur + 1) > $FF
+	bcs	comms_read_err	; (B + comms_cur + 1) > $FF
 
 	deca			; Store new cursor position
 	staa	comms_cur
@@ -101,6 +105,10 @@ comms_read:
 	os	pk$read
 
 	clc			; Return success signal
+	rts
+
+comms_read_err:
+	sec			; Return error signal
 	rts
 
 ; Read a single byte from the comms buffer at the current cursor location.
@@ -112,13 +120,17 @@ comms_read_byte:
 	ldaa	comms_cur
 	inca
 	cmpa	#$FF
-	beq	comms_err	; (comms_cur + 1) == $FF
+	beq	comms_readb_err	; (comms_cur + 1) == $FF
 
 	staa	comms_cur	; Store new cursor position
 
 	os	pk$rbyt		; Read byte from pack
 
 	clc			; Return success signal
+	rts
+
+comms_readb_err:
+	sec			; Return error signal
 	rts
 
 ; Write bytes to the comms buffer at the current cursor location.
@@ -132,7 +144,7 @@ comms_write:
 	ldaa	comms_cur
 	inca
 	aba
-	bcs	comms_err	; (B + comms_cur + 1) > $FF
+	bcs	comms_write_err	; (B + comms_cur + 1) > $FF
 
 	deca			; Store new cursor position
 	staa	comms_cur
@@ -142,7 +154,63 @@ comms_write:
 
 	clrb			; Return error if error when writing to pack
 	cmpb	#0
-	bne	comms_err
+	bne	comms_write_err
 
 	clc			; Return success signal
 	rts
+
+comms_write_err:
+	sec			; Return error signal
+	rts
+
+; Wait for a reply from the command already invoked using comms_write.
+; INPUT:	None
+; OUTPUT:	A = Trashed
+;		B = Length of reply, excluding count and status bytes
+;		C = Set if command execution was unsuccessful
+comms_wait:
+	ldaa	#20		; Set timeout to 1 second
+	staa	comms_wait_timeout
+
+comms_wait_poll:
+	ldd	#1		; Brief wait for a response
+	os	tm$wait
+
+	jsr	comms_begin	; Begin reading response
+	bcs	comms_wait_err
+
+	jsr	comms_read_byte	; If count byte is 0, then continue waiting
+	cmpb	#0
+	beq	comms_wait_poll
+	stab	comms_wait_rlen	; Store response length
+
+	jsr	comms_read_byte	; Read status byte
+	cmpb	#1		; If 1, then we have a successful response
+	beq	comms_wait_success
+	cmpb	#2		; If 2, then command execution was unsuccessful
+	beq	comms_wait_err
+
+	ldaa	comms_wait_timeout
+	cmpa	#0		; If current timeout value is 0, throw error
+	beq	comms_wait_err
+	deca			; Otherwise, decrease timeout value
+	staa	comms_wait_timeout
+
+	bra	comms_wait_poll	; Continue waiting
+
+comms_wait_success:
+	ldab	comms_wait_rlen	; Load response length
+	decb			; Skip status byte
+
+	clc
+	rts
+
+comms_wait_err:
+	sec			; Return error signal
+	rts
+
+comms_wait_timeout:
+	.BYTE	$00
+
+comms_wait_rlen:
+	.BYTE	$00

@@ -92,6 +92,7 @@ remove_msg:
 old_kbb_pkof:
 	.BYTE 0
 
+.INCLUDE error.inc
 .INCLUDE comms.inc
 .INCLUDE udg.inc
 .INCLUDE logo.inc
