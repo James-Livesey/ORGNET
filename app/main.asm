@@ -39,14 +39,6 @@ install:
 	jsr	comms_init
 	bcs	install_ret	; Return error if comms could not init
 
-	jsr	comms_begin	; Say hello over the comms buffer
-	bcs	install_ret
-	ldab	hello_buffer
-	incb
-	ldx	#hello_buffer
-	jsr	comms_write
-	bcs	install_ret
-
 	ldaa	kbb_pkof	; Prevent auto pack switch-off
 	staa	old_kbb_pkof
 	ldaa	#0
@@ -63,9 +55,6 @@ install:
 
 install_ret:
 	rts
-
-hello_buffer:
-	.ASCIC	"HELLO "
 
 remove:
 	ldaa	#$0C		; Clear screen

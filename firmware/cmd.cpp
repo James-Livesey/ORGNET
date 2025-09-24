@@ -1,11 +1,6 @@
 #include "cmd.h"
 
 std::vector<Command> availableCommands = {
-    Command("HELLO", []() -> CommsBuffer {
-        printf("HELLO command called\n");
-
-        return stringBuffer(ReturnCode::SUCCESS, "Hello, world!");
-    }),
     Command("WISTAT", []() -> CommsBuffer {
         return stringBuffer(ReturnCode::SUCCESS, "\x01\x03" "Test Network");
     })
