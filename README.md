@@ -7,3 +7,12 @@ This repository contains Git submodules. To clone this repository, run:
 ```bash
 git clone --recurse-submodules https://github.com/James-Livesey/ORGNET
 ```
+
+## Building and running
+To build ORGNET's firmware and application, run:
+
+```bash
+./build.sh
+```
+
+This will also upload the build to the RP2350.
