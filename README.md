@@ -15,7 +15,7 @@ To build ORGNET's firmware and application, run:
 ./build.sh
 ```
 
-This will also upload the build to the RP2350.
+This will also upload the build to the RP2350 over USB.
 
 To test ORGNET's application in an emulator, run:
 
