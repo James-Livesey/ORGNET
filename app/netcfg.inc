@@ -153,7 +153,7 @@ netcfg_about:
 
 	ldab	netcfg_about_msg1
 	ldx	#netcfg_about_msg1+1
-	os	dp$prnt		; Print message to screen
+	os	dp$prnt		; Print first message to screen
 
 	os	kb$getk		; Wait for keypress; exit if ON is pressed
 	cmpb	#1
@@ -164,7 +164,7 @@ netcfg_about:
 
 	ldab	netcfg_about_msg2
 	ldx	#netcfg_about_msg2+1
-	os	dp$prnt		; Print message to screen
+	os	dp$prnt		; Print second message to screen
 
 	os	kb$getk		; Wait for keypress
 
