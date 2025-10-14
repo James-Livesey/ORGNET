@@ -37,7 +37,7 @@ netcfg_menu:
 	.WORD	netcfg_about
 	.BYTE	$00
 
-; Displays Wi-Fi configuration options.
+; Displays Wi-Fi status and configuration options.
 ; INPUT:	None
 ; OUTPUT:	None
 ;		D = Trashed
