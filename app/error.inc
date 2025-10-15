@@ -4,10 +4,11 @@
 ERROR_GENERIC	.EQU	$00
 ERROR_COMMS	.EQU	$01
 
-; Shows an error message based on the error code provided. This should be called
-; as a branch instead of as a subroutine call if an early exit from the calling
-; subroutine is desired. Otherwise, this subroutine can be called as normal to
-; continue executing the calling subroutine.
+; Shows an error message based on the error code provided and waits for the user
+; to dismiss it. This should be called as a branch instead of as a subroutine
+; call if an early exit from the calling subroutine is desired. Otherwise, this
+; subroutine can be called as normal to continue executing the calling
+; subroutine.
 ; INPUTS:	B = Error code
 ; OUTPUTS:	D = Trashed
 ;		X = Trashed
