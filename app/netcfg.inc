@@ -8,7 +8,8 @@ netcfg_item:
 	.ASCIC	"NETCFG"
 	.WORD	netcfg_main
 
-; Main subroutine for NETCFG application.
+; Main subroutine for NETCFG application. Shows a menu of network configuration
+; options.
 ; INPUT:	None
 ; OUTPUT:	None
 ;		D = Trashed
