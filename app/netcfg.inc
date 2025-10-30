@@ -111,7 +111,8 @@ netcfg_wifi_poll:
 	rts
 
 netcfg_wifi_err:
-	error	ERROR_COMMS
+	ldab	#ERROR_COMMS
+	jmp	error_show	; Show error message and exit subroutine
 
 netcfg_wistat_cmd:
 	.ASCIC	"WISTAT "

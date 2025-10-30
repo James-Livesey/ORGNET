@@ -56,8 +56,3 @@ error_comms:
 error_msgs:
 	.WORD	error_generic
 	.WORD	error_comms
-
-error	.MACRO	error_code
-	ldab	#error_code
-	jmp	error_show
-.ENDM
