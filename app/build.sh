@@ -6,7 +6,15 @@ FILE=main.asm
 BIN_FILE=${FILE%.*}.bin
 OPK_FILE=${FILE%.*}.opk
 
+if [ "$1" = "--test" ]; then
+    echo ".INCLUDE comms.mock.inc" > comms.inc
+else
+    echo ".INCLUDE comms.real.inc" > comms.inc
+fi
+
 toolchain/psion-org2-assembler/org2asm.tcl -f $FILE
+
+echo ".INCLUDE comms.real.inc" > comms.inc
 
 python3 toolchain/makeopk.py $BIN_FILE $OPK_FILE
 
