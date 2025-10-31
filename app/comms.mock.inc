@@ -8,14 +8,10 @@ comms_cur:
 	.BYTE	$00
 
 comms_buf:
-	; Currently just an example return value for WISTAT command
-	.BYTE	12
-	.BYTE	$01
-	.BYTE	$01
-	.BYTE	$03
-	.ASCII	"Mock Test"
-	.BLKB	243
-	; .BLKB	256
+	.BLKB	256
+
+comms_buf_ofst:
+	.BYTE	$00
 
 ; Initialise the communications manager.
 ; INPUT:	None
@@ -50,7 +46,7 @@ comms_begin:
 comms_read:
 	clc			; Check if cursor would exceed $FF
 	ldaa	comms_cur
-	staa	comms_read_ofst	; Store current cursor position as read offset
+	staa	comms_buf_ofst	; Store current cursor position as read offset
 	inca
 	aba
 	bcs	comms_read_err	; (B + comms_cur + 1) > $FF
@@ -64,7 +60,7 @@ comms_read:
 	stx	comms_read_dst	; Store destination buffer address from X
 
 	ldx	#comms_buf	; Load source (comms) buffer address into X
-	ldab	comms_read_ofst
+	ldab	comms_buf_ofst
 	abx			; Add read offset to source buffer address
 
 	ldd	comms_read_dst	; Load destination buffer address into D
@@ -79,9 +75,6 @@ comms_read:
 comms_read_err:
 	sec			; Return error signal
 	rts
-
-comms_read_ofst:
-	.BYTE	$00
 
 comms_read_dst:
 	.WORD	$0000
@@ -120,6 +113,7 @@ comms_readb_err:
 comms_write:
 	clc			; Check if cursor would exceed $FF
 	ldaa	comms_cur
+	staa	comms_buf_ofst	; Store current cursor position as write offset
 	inca
 	aba
 	bcs	comms_write_err	; (B + comms_cur + 1) > $FF
@@ -127,7 +121,15 @@ comms_write:
 	deca			; Store new cursor position
 	staa	comms_cur
 
-	; TODO: Copy bytes into comms buffer and generate mock response
+	clra			; Set utw_s0 to number of bytes to copy
+	std	utw_s0
+
+	ldab	comms_buf_ofst	; Destination is comms buffer + offset
+	ldd	#comms_buf
+
+	os	ut$cpyb		; Copy source buffer into comms buffer
+
+	jsr	comms_mock	; Generate mock response
 
 	clc			; Return success signal
 	rts
@@ -187,3 +189,74 @@ comms_wait_timeout:
 
 comms_wait_rlen:
 	.BYTE	$00
+
+; Take the current command from the comms buffer and generate an appropriate
+; mock response.
+; INPUT:	None
+; OUTPUT:	None
+; 		D = Trashed
+; 		X = Trashed
+comms_mock:
+	ldab	$00
+	stab	comms_mock_idx
+
+comms_mock_loop:
+	ldx	#comms_mock_cmds
+	ldab	comms_mock_idx	; Get command address to compare from table
+	abx
+
+	ldx	0,x		; Load command address pointed to by table entry
+	cpx	#$0000		; Check if at end of table
+	beq	comms_mock_ret	; If so, return
+
+	clra
+	ldab	0,x		; Get command length
+	inx			; Skip over count byte in command
+	stx	utw_s0		; Store as second string to compare
+
+	ldx	#comms_buf	; Load comms buffer first string to compare
+	ldaa	0,x		; Get buffer contents length
+	inx			; Skip over count byte in buffer contents
+
+	os	ut$icpb		; Perform string comparison
+	beq	comms_mock_copy	; Copy response if match
+
+	ldab	comms_mock_idx	; Move onto next command address in table
+	addb	#4		; Skipping over 2 words (command and response)
+	stab	comms_mock_idx
+
+	bra	comms_mock_loop
+
+comms_mock_copy:
+	ldx	#comms_mock_cmds
+	ldab	comms_mock_idx	; Get address of command
+	abx
+
+	ldx	2,x		; Load response address from table (next word)
+	clra
+	ldab	0,x		; Get response length
+	incb			; Include count byte in length
+	std	utw_s0		; Store response length in utw_s0
+	ldd	#comms_buf	; Destination is comms buffer
+	os	ut$cpyb		; Copy response to comms buffer
+
+comms_mock_ret:
+	rts
+
+comms_mock_idx:
+	.BYTE	$00
+
+comms_mock_wistat_cmd:
+	.ASCIC	"WISTAT "
+
+comms_mock_wistat_res:
+	.BYTE	12
+	.BYTE	$01
+	.BYTE	$01
+	.BYTE	$03
+	.ASCII	"Mock Test"
+
+comms_mock_cmds:
+	.WORD	comms_mock_wistat_cmd
+	.WORD	comms_mock_wistat_res
+	.WORD	$0000
