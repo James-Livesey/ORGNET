@@ -79,6 +79,10 @@ comms_read_err:
 comms_read_dst:
 	.WORD	$0000
 
+comms_read_vec:
+	ldd	utw_s0
+	jmp	comms_read
+
 ; Read a single byte from the comms buffer at the current cursor location.
 ; INPUT:	None
 ; OUTPUT:	B = Byte read
@@ -137,6 +141,10 @@ comms_write:
 comms_write_err:
 	sec			; Return error signal
 	rts
+
+comms_write_vec:
+	ldd	utw_s0
+	jmp	comms_write
 
 ; Wait for a reply from the command already invoked using comms_write.
 ; INPUT:	None

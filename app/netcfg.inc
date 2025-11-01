@@ -44,32 +44,32 @@ netcfg_menu:
 ;		D = Trashed
 ;		X = Trashed
 netcfg_wifi:
-	jsr	comms_begin	; Begin comms to check Wi-Fi status
+	jvec	COMMS_BEGIN	; Begin comms to check Wi-Fi status
 	bcs	netcfg_wifi_err
 
 	ldab	netcfg_wistat_cmd
 	incb
 	ldx	#netcfg_wistat_cmd
-	jsr	comms_write	; Invoke WISTAT command
+	jvec	COMMS_WRITE	; Invoke WISTAT command
 
-	jsr	comms_wait	; Wait for reply and store SSID length from A
+	jvec	COMMS_WAIT	; Wait for reply and store SSID length from A
 	bcs	netcfg_wifi_err
 	decb			; Discount connection status byte in length
 	decb			; Discount signal strength byte in length
 	andb	#$0F		; Limit length to 15 chars to fit buffer
 	stab	netcfg_wissid_disp
 
-	jsr	comms_read_byte	; Store connection status
+	jvec	COMMS_READ_BYTE	; Store connection status
 	bcs	netcfg_wifi_err
 	stab	netcfg_wistatus
 
-	jsr	comms_read_byte	; Store connection strength
+	jvec	COMMS_READ_BYTE	; Store connection strength
 	bcs	netcfg_wifi_err
 	stab	netcfg_wistrength
 
 	ldab	netcfg_wissid_disp
 	ldx	#netcfg_wissid_disp+1
-	jsr	comms_read	; Read SSID into its buffer
+	jvec	COMMS_READ	; Read SSID into its buffer
 	bcs	netcfg_wifi_err
 
 netcfg_wifi_draw:
@@ -112,7 +112,8 @@ netcfg_wifi_poll:
 
 netcfg_wifi_err:
 	ldab	#ERROR_COMMS
-	jmp	error_show	; Show error message and exit subroutine
+	jvec	ERROR_SHOW	; Show error message and exit subroutine
+	rts
 
 netcfg_wistat_cmd:
 	.ASCIC	"WISTAT "

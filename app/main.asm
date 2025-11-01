@@ -33,6 +33,13 @@ start:
 vec:
 	.WORD	install
 	.WORD	remove
+	.WORD	language
+	.WORD	error_show_vec
+	.WORD	comms_begin
+	.WORD	comms_read_vec
+	.WORD	comms_read_byte
+	.WORD	comms_write_vec
+	.WORD	comms_wait
 endvec:
 
 install:
@@ -78,9 +85,14 @@ remove:
 remove_msg:
 	.ASCIC	"Remove vector"
 
+language:
+	clc			; Return success signal
+	rts
+
 old_kbb_pkof:
 	.BYTE 0
 
+.INCLUDE vectors.inc
 .INCLUDE error.inc
 .INCLUDE comms.inc
 .INCLUDE udg.inc

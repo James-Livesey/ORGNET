@@ -56,3 +56,7 @@ error_comms:
 error_msgs:
 	.WORD	error_generic
 	.WORD	error_comms
+
+error_show_vec:
+	ldd	utw_s0
+	jmp	error_show
