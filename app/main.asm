@@ -95,6 +95,7 @@ old_kbb_pkof:
 .INCLUDE vectors.inc
 .INCLUDE error.inc
 .INCLUDE comms.inc
+.INCLUDE appldr.inc
 .INCLUDE udg.inc
 .INCLUDE logo.inc
 .INCLUDE tlmenu.inc

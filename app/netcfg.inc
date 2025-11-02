@@ -4,6 +4,9 @@
 WISTATUS_DISCON	.EQU	$00
 WISTATUS_CON	.EQU	$01
 
+netcfg_entry:
+	.WORD	netcfg_main
+
 netcfg_item:
 	.ASCIC	"NETCFG"
 	.WORD	netcfg_main
