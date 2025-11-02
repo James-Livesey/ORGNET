@@ -23,7 +23,7 @@ tl_add:
 	rts
 
 tl_item:
-	.WORD	0
+	.WORD	$0000
 
 ; Remove an item from the top-level menu.
 ; INPUT:	X = Pointer to menu item struct

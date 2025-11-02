@@ -4,11 +4,9 @@
 WISTATUS_DISCON	.EQU	$00
 WISTATUS_CON	.EQU	$01
 
-netcfg_entry:
-	.WORD	netcfg_main
+.OVER netcfg
 
-netcfg_item:
-	.ASCIC	"NETCFG"
+netcfg_entry:
 	.WORD	netcfg_main
 
 ; Main subroutine for NETCFG application. Shows a menu of network configuration
@@ -182,3 +180,8 @@ netcfg_about_msg1:
 
 netcfg_about_msg2:
 	.ASCIC	"C Copyright 2025James Livesey"
+
+.EOVER
+
+.OVER netcfgend
+.EOVER

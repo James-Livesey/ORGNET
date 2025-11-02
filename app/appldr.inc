@@ -20,7 +20,12 @@ appldr_load:
 	ldab	#$FF		; Get top of allocator and add $FF
 	abx
 	cpx	rta_sp		; Check if collides with stack pointer
-	bcs	appldr_load_mer	; If so, then throw error
+	bcc	appldr_load_mer	; Throw error if so (ala_free + $FF >= rta_sp)
+
+	clra			; Set current pack first
+	ldab	comms_pack_id
+	os	pk$setp
+	bcs	appldr_load_err
 
 	ldx	appldr_load_adr	; Address of app's relocatable code on pack
 	ldd	rta_sp		; Address to load code into memory
@@ -54,3 +59,19 @@ appldr_load_adr:
 
 appldr_load_len:
 	.WORD	$0000
+
+; Unload the currently loaded app.
+; INPUT:	None
+; OUTPUT:	None
+;		D = Trashed
+;		X = Trashed
+appldr_unload:
+	ldd	rta_sp		; Increase stack pointer by app overlay length
+	addd	appldr_load_len
+	std	rta_sp
+
+	ldd 	#0		; Clear app overlay length for further calls
+	std	appldr_load_len
+
+	clc
+	rts

@@ -53,8 +53,7 @@ install:
 
 	jsr	logo_show	; Show ORGNET logo
 
-	ldx	#netcfg_item	; Add NETCFG item to top-level menu
-	jsr	tl_add
+	jsr	apps_add_tl	; Add ORGNET apps to top-level menu
 
 	os	kb$getk		; Wait for keypress
 
@@ -71,8 +70,7 @@ remove:
 	ldx	#remove_msg+1
 	os	dp$prnt
 
-	ldx	#netcfg_item	; Remove NETCFG item from main menu
-	jsr	tl_remove
+	jsr	apps_rm_tl	; Remove ORGNET apps from top-level menu
 
 	ldaa	old_kbb_pkof	; Restore auto pack switch-off behaviour
 	staa	kbb_pkof
@@ -95,13 +93,15 @@ old_kbb_pkof:
 .INCLUDE vectors.inc
 .INCLUDE error.inc
 .INCLUDE comms.inc
+.INCLUDE apps.inc
 .INCLUDE appldr.inc
 .INCLUDE udg.inc
 .INCLUDE logo.inc
 .INCLUDE tlmenu.inc
-.INCLUDE netcfg.inc
 
 .EOVER
+
+.INCLUDE netcfg.inc
 
 .OVER prgend
 .EOVER
