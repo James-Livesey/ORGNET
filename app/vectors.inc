@@ -1,6 +1,6 @@
 ; CORE ROUTINE VECTORS
 ; Allows ORGNET apps to call common subroutines that reside in the permanent
-; allocator cell from their own allocator cell.
+; allocator cell from their own arbitrary memory location.
 
 ERROR_SHOW	.EQU	3
 COMMS_BEGIN	.EQU	4
