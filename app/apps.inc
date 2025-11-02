@@ -29,11 +29,11 @@ apps_netcfg_tl:
 	.WORD	apps_netcfg_vec
 
 apps_netcfg_vec:
-	ldx	#%netcfg-%xx
+	ldx	#%netcfg-%xx	; Load app from overlay to stack and execute it
 	ldd	#%netcfgend-%netcfg
 	jsr	appldr_load
 
-	jsr	appldr_unload
+	jsr	appldr_unload	; Unload it from language stack when finished
 
 	clc
 	rts
