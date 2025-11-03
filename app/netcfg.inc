@@ -73,7 +73,17 @@ netcfg_wifi:
 	jvec	COMMS_READ	; Read SSID into its buffer
 	bcs	netcfg_wifi_err
 
+	bra	netcfg_wifi_draw
+
+netcfg_wifi_err:
+	ldab	#ERROR_COMMS
+	jvec	ERROR_SHOW	; Show error message and exit subroutine
+	rts
+
 netcfg_wifi_draw:
+	ldaa	#60		; Set poll interval to 3 seconds
+	staa	netcfg_wipoll_timer
+
 	ldaa	#$0C		; Clear screen
 	os	dp$emit
 
@@ -106,15 +116,30 @@ netcfg_widiscon:
 	os	dp$prnt		; Print disconnected message to screen
 
 netcfg_wifi_poll:
-	os	kb$getk		; Get key
-	; TODO: Poll keyboard instead to periodically update Wi-Fi status
+	os	kb$brek		; Exit if ON is pressed
+	bcs	netcfg_wifi_exit
 
-	rts
+	os	kb$test		; Get last pressed key
+	; TODO: Make MODE key open connection options menu
 
-netcfg_wifi_err:
-	ldab	#ERROR_COMMS
-	jvec	ERROR_SHOW	; Show error message and exit subroutine
-	rts
+	os	kb$uget		; Unget the key
+
+	ldd	#1		; Brief wait as part of timer
+	os	tm$wait
+
+	ldaa	netcfg_wipoll_timer
+	cmpa	#0		; If current timer value is 0, update status
+	beq	netcfg_wifi_update
+	deca			; Otherwise, decrease timer value
+	staa	netcfg_wipoll_timer
+
+	bra	netcfg_wifi_poll
+
+netcfg_wifi_update:
+	jmp	netcfg_wifi
+
+netcfg_wifi_exit:
+	rts			; Exit area
 
 netcfg_wistat_cmd:
 	.ASCIC	"WISTAT "
@@ -138,6 +163,9 @@ netcfg_wistatus_msgs:
 	.WORD	netcfg_wistatus_con_msg
 
 netcfg_wistrength:
+	.BYTE	$00
+
+netcfg_wipoll_timer:
 	.BYTE	$00
 
 ; Displays options to configure which built-in ORGNET apps are shown.
