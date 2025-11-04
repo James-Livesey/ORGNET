@@ -59,4 +59,4 @@ error_msgs:
 
 error_show_vec:
 	ldd	utw_s0
-	jmp	error_show
+	bra	error_show

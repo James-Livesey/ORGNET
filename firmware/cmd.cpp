@@ -2,7 +2,19 @@
 
 std::vector<Command> availableCommands = {
     Command("WISTAT", []() -> CommsBuffer {
-        return stringBuffer(ReturnCode::SUCCESS, "\x01\x03" "Test Network");
+        static int variant = 1;
+        std::string response;
+
+        switch (variant) {
+            case 0: response = std::string("\x00\x00", 2); break;
+            case 1: response = std::string("\x01\x00" "Hello SSID", 12); break;
+            case 2: response = std::string("\x01\x01" "SSID With A Really Long Name", 30); break;
+            case 3: response = std::string("\x01\x02" "Test Network", 14); break;
+        }
+
+        variant = (variant + 1) % 4;
+
+        return stringBuffer(ReturnCode::SUCCESS, response);
     })
 };
 

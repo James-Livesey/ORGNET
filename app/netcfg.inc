@@ -57,9 +57,15 @@ netcfg_wifi:
 	bcs	netcfg_wifi_err
 	decb			; Discount connection status byte in length
 	decb			; Discount signal strength byte in length
-	andb	#$0F		; Limit length to 15 chars to fit buffer
 	stab	netcfg_wissid_disp
 
+	cmpb	#15		; Don't cap SSID length if <= 15
+	bls	netcfg_wissid_ok
+
+	ldab	#15		; Limit length to 15 chars to fit buffer
+	stab	netcfg_wissid_disp
+
+netcfg_wissid_ok:
 	jvec	COMMS_READ_BYTE	; Store connection status
 	bcs	netcfg_wifi_err
 	stab	netcfg_wistatus
@@ -81,6 +87,18 @@ netcfg_wifi_err:
 	rts
 
 netcfg_wifi_draw:
+	ldaa	#0		; Set up user-defined graphics
+	ldx	#netcfg_wistrength_udg_0
+	jvec	UDG
+
+	ldaa	#1
+	ldx	#netcfg_wistrength_udg_1
+	jvec	UDG
+
+	ldaa	#2
+	ldx	#netcfg_wistrength_udg_2
+	jvec	UDG
+
 	ldaa	#60		; Set poll interval to 3 seconds
 	staa	netcfg_wipoll_timer
 
@@ -94,6 +112,13 @@ netcfg_wifi_draw:
 	ldab	netcfg_wissid_disp
 	ldx	#netcfg_wissid_disp+1
 	os	dp$prnt		; Print SSID to screen
+
+	ldaa	#15		; Set cursor pos to end of first line
+	clrb
+	os	dp$stat
+
+	ldaa	netcfg_wistrength
+	os	dp$emit		; Draw connection strength character to screen
 
 	ldaa	#16		; Set cursor pos on second line
 	clrb
@@ -164,6 +189,36 @@ netcfg_wistatus_msgs:
 
 netcfg_wistrength:
 	.BYTE	$00
+
+netcfg_wistrength_udg_0:
+	.BYTE	0
+	.BYTE	0
+	.BYTE	0
+	.BYTE	0
+	.BYTE	0
+	.BYTE	16
+	.BYTE	21
+	.BYTE	0
+
+netcfg_wistrength_udg_1:
+	.BYTE	0
+	.BYTE	0
+	.BYTE	0
+	.BYTE	4
+	.BYTE	4
+	.BYTE	20
+	.BYTE	21
+	.BYTE	0
+
+netcfg_wistrength_udg_2:
+	.BYTE	0
+	.BYTE	1
+	.BYTE	1
+	.BYTE	5
+	.BYTE	5
+	.BYTE	21
+	.BYTE	21
+	.BYTE	0
 
 netcfg_wipoll_timer:
 	.BYTE	$00

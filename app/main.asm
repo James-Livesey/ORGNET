@@ -40,6 +40,7 @@ vec:
 	.WORD	comms_read_byte
 	.WORD	comms_write_vec
 	.WORD	comms_wait
+	.WORD	udg_vec
 endvec:
 
 install:

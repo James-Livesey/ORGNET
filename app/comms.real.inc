@@ -92,7 +92,7 @@ comms_read_err:
 
 comms_read_vec:
 	ldd	utw_s0
-	jmp	comms_read
+	bra	comms_read
 
 ; Read a single byte from the comms buffer at the current cursor location.
 ; INPUT:	None
@@ -147,7 +147,7 @@ comms_write_err:
 
 comms_write_vec:
 	ldd	utw_s0
-	jmp	comms_write
+	bra	comms_write
 
 ; Wait for a reply from the command already invoked using comms_write.
 ; INPUT:	None

@@ -81,7 +81,7 @@ comms_read_dst:
 
 comms_read_vec:
 	ldd	utw_s0
-	jmp	comms_read
+	bra	comms_read
 
 ; Read a single byte from the comms buffer at the current cursor location.
 ; INPUT:	None
@@ -144,7 +144,7 @@ comms_write_err:
 
 comms_write_vec:
 	ldd	utw_s0
-	jmp	comms_write
+	bra	comms_write
 
 ; Wait for a reply from the command already invoked using comms_write.
 ; INPUT:	None
@@ -258,11 +258,11 @@ comms_mock_wistat_cmd:
 	.ASCIC	"WISTAT "
 
 comms_mock_wistat_res:
-	.BYTE	12
-	.BYTE	$01
-	.BYTE	$01
-	.BYTE	$03
-	.ASCII	"Mock Test"
+	.BYTE	12		; Response length
+	.BYTE	$01		; Response status
+	.BYTE	$01		; Connection status
+	.BYTE	$02		; Connection strength
+	.ASCII	"Mock Test"	; SSID
 
 comms_mock_cmds:
 	.WORD	comms_mock_wistat_cmd

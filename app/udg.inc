@@ -45,6 +45,10 @@ udg_char:
 udg_byte_idx:
 	.BYTE	0
 
+udg_vec:
+	ldd	utw_s0
+	bra	udg
+
 ; Wait for LCD controller so that it is ready to accept a command or data value.
 ; INPUT:	None
 ; OUTPUT:	None
