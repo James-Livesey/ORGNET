@@ -9,7 +9,7 @@ WISTATUS_CON	.EQU	$01
 netcfg_entry:
 	.WORD	netcfg_main
 
-; Main subroutine for NETCFG application. Shows a menu of network configuration
+; Main subroutine for NETCFG application. Show a menu of network configuration
 ; options.
 ; INPUT:	None
 ; OUTPUT:	None
@@ -39,7 +39,7 @@ netcfg_menu:
 	.WORD	netcfg_about
 	.BYTE	$00
 
-; Displays Wi-Fi status and configuration options.
+; Display Wi-Fi status and configuration options.
 ; INPUT:	None
 ; OUTPUT:	None
 ;		D = Trashed
@@ -145,8 +145,10 @@ netcfg_wifi_poll:
 	bcs	netcfg_wifi_exit
 
 	os	kb$test		; Get last pressed key
-	; TODO: Make MODE key open connection options menu
+	cmpb	#2		; Open Wi-Fi opts menu if MODE key is pressed
+	beq	nectfg_wifi_opts
 
+	; FIXME: First pressed key gets stuck in unget buffer
 	os	kb$uget		; Unget the key
 
 	ldd	#1		; Brief wait as part of timer
@@ -165,6 +167,10 @@ netcfg_wifi_update:
 
 netcfg_wifi_exit:
 	rts			; Exit area
+
+nectfg_wifi_opts:
+	jsr	netcfg_wiopts
+	bra	netcfg_wifi_poll
 
 netcfg_wistat_cmd:
 	.ASCIC	"WISTAT "
@@ -223,13 +229,86 @@ netcfg_wistrength_udg_2:
 netcfg_wipoll_timer:
 	.BYTE	$00
 
-; Displays options to configure which built-in ORGNET apps are shown.
+; Show a menu of Wi-Fi configuration options.
+; INPUT:	None
+; OUTPUT:	None
+;		D = Trashed
+;		X = Trashed
+netcfg_wiopts:
+	ldx	#netcfg_woconmenu
+
+	ldaa	netcfg_wistatus	; Show connected menu if not disconnected
+	cmpa	#0
+	bne	netcfg_woshow
+
+netcfg_wodiscon:
+	ldx	#netcfg_wodisconmenu
+
+netcfg_woshow:
+	ldd	#$1001
+	os	mn$disp		; Open main menu
+
+	cmpb	#1		; Exit if ON is pressed
+	beq	netcfg_woexit
+
+	jsr	0,x		; Otherwise, visit selected area
+
+	bra	netcfg_wiopts
+
+netcfg_woexit:
+	; FIXME: Exiting goes back to NETCFG menu and not WIFI menu
+	rts			; Exit application
+
+netcfg_woconmenu:
+	.ASCIC	"DISCON"
+	.WORD	netcfg_woexit
+	.ASCIC	"FORGET"
+	.WORD	netcfg_woexit
+	.ASCIC	"NEWCON"
+	.WORD	netcfg_newcon
+	.ASCIC	"SAVED"
+	.WORD	netcfg_woexit
+	.BYTE	$00
+
+netcfg_wodisconmenu:
+	.ASCIC	"NEWCON"
+	.WORD	netcfg_newcon
+	.ASCIC	"SAVED"
+	.WORD	netcfg_woexit
+	.BYTE	$00
+
+; Show a list of SSIDs for nearby Wi-Fi access points to connect to.
+; INPUT:	None
+; OUTPUT:	None
+netcfg_newcon:
+	ldx	#netcfg_newcon_read_cbk
+	jvec	LINE_BEGIN
+
+	jvec	LINE_SHOW
+
+	rts
+
+netcfg_newcon_read_cbk:
+	ldx	#netcfg_newcon_buf
+	ldd	#netcfg_newcon_hsp
+
+	clc
+	rts
+
+netcfg_newcon_buf:
+	.ASCIC	"Testing"
+
+netcfg_newcon_hsp:
+	.BYTE	$01
+	.BYTE	$00
+
+; Display options to configure which built-in ORGNET apps are shown.
 ; INPUT:	None
 ; OUTPUT:	None
 netcfg_apps:
 	rts
 
-; Displays about information.
+; Display about information.
 ; INPUT:	None
 ; OUTPUT:	None
 ;		D = Trashed

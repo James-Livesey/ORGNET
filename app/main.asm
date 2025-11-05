@@ -41,6 +41,8 @@ vec:
 	.WORD	comms_write_vec
 	.WORD	comms_wait
 	.WORD	udg_vec
+	.WORD	line_begin_vec
+	.WORD	line_show
 endvec:
 
 install:
@@ -99,6 +101,7 @@ old_kbb_pkof:
 .INCLUDE udg.inc
 .INCLUDE logo.inc
 .INCLUDE tlmenu.inc
+.INCLUDE line.inc
 
 .EOVER
 

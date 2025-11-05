@@ -9,6 +9,8 @@ COMMS_READ_BYTE	.EQU	6
 COMMS_WRITE	.EQU	7
 COMMS_WAIT	.EQU	8
 UDG		.EQU	9
+LINE_BEGIN	.EQU	10
+LINE_SHOW	.EQU	11
 
 jvec	.MACRO	vector
 	std	utw_s0		; Store D in utw_s0
