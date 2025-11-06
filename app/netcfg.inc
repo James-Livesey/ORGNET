@@ -141,16 +141,17 @@ netcfg_widiscon:
 	os	dp$prnt		; Print disconnected message to screen
 
 netcfg_wifi_poll:
-	os	kb$brek		; Exit if ON is pressed
-	bcs	netcfg_wifi_exit
+	os	kb$test		; Test if key is being pressed
+	cmpb	#0		; If not, then skip key check
+	beq	netcfg_wifi_nokey
 
-	os	kb$test		; Get last pressed key
-	cmpb	#2		; Open Wi-Fi opts menu if MODE key is pressed
+	os	kb$getk		; Get last pressed key
+	cmpb	#1		; Exit if ON is pressed
+	beq	netcfg_wifi_exit
+	cmpb	#2		; Open Wi-Fi opts menu if MODE is pressed
 	beq	nectfg_wifi_opts
 
-	; FIXME: First pressed key gets stuck in unget buffer
-	os	kb$uget		; Unget the key
-
+netcfg_wifi_nokey:
 	ldd	#1		; Brief wait as part of timer
 	os	tm$wait
 
@@ -162,15 +163,15 @@ netcfg_wifi_poll:
 
 	bra	netcfg_wifi_poll
 
-netcfg_wifi_update:
-	jmp	netcfg_wifi
-
 netcfg_wifi_exit:
 	rts			; Exit area
 
 nectfg_wifi_opts:
-	jsr	netcfg_wiopts
-	bra	netcfg_wifi_poll
+	jsr	netcfg_wiopts	; Open Wi-Fi options menu
+	; Fall through to update Wi-Fi status screen
+
+netcfg_wifi_update:
+	jmp	netcfg_wifi	; Update Wi-Fi status screen
 
 netcfg_wistat_cmd:
 	.ASCIC	"WISTAT "
@@ -256,7 +257,6 @@ netcfg_woshow:
 	bra	netcfg_wiopts
 
 netcfg_woexit:
-	; FIXME: Exiting goes back to NETCFG menu and not WIFI menu
 	rts			; Exit application
 
 netcfg_woconmenu:
