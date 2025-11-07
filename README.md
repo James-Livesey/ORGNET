@@ -2,7 +2,7 @@
 A wireless networking peripheral for the Psion Organiser II.
 
 ## Getting the code
-This repository contains Git submodules which must be cloned to be able to assemble the ORGNET application's code and run an emulated Organiser II. To clone this repository, run:
+This repository contains Git submodules that must be cloned to be able to assemble the ORGNET application's code and run an emulated Organiser II. To clone this repository, run:
 
 ```bash
 git clone --recurse-submodules https://github.com/James-Livesey/ORGNET
