@@ -62,35 +62,56 @@ line_begin_vec:
 	ldd	utw_s0
 	bra	line_begin
 
-; Draw a line given by the address of its buffer, at the current scroll X
+; Draw a line given by the address of its buffer, at the given scroll X
 ; position.
-; INPUT:	B = Row of display to draw line on
+; INPUT:	A = Scroll X position
+;		B = Row of display to draw line on
 ;		X = Address of line buffer
 ; OUTPUT:	None
 ;		D = Trashed
 ;		X = Trashed
 line_draw_scrlx:
+	staa	line_dscrlx	; Store scroll X position for later
+
 	ldaa	#16		; Set cursor pos to start of given row
 	mul			; B = row * 16
 	tba			; Move B into A
 	os	dp$stat
 
-	; TODO: Clear the line
-
 	ldaa	0,x		; Get length of line
-	ldab	line_curx	; Get current scroll X position
+	ldab	line_dscrlx	; Get current scroll X position
 	cba			; Don't do anything if scrolled past end of line
-	bls	line_dscrlx_end	; (length <= line_scrlx)
+	bls	line_dscrlx_end	; (Length <= line_scrlx)
 
-	; TODO: Cap line length if > 16
-	suba	line_curx	; Decrease line length by scroll X position
+	suba	line_dscrlx	; Decrease line length by scroll X position
 	abx			; Add current scroll X position to line address
 	inx			; Skip over count byte
-	tab			; Move A into B
+
+	cmpa	#16		; Don't cap length if line fits on display
+	bls	line_dscrlx_ncp	; (Length <= 16)
+	ldaa	#16		; Set length to 16
+
+line_dscrlx_ncp:
+	tab			; Move A (line length) into B
 	os	dp$prnt		; Print the line
+	tab			; Move A into B again
+
+line_dscrlx_fll:
+	cmpb	#16		; Don't fill rest of line if at end
+	bcc	line_dscrlx_end	; (Column counter >= 16)
+
+	ldaa	#$20		; Fill rest of line with spaces
+	os	dp$emit
+
+	incb			; Increment column counter
+
+	bra	line_dscrlx_fll	; Loop to continue filling line
 
 line_dscrlx_end:
 	rts
+
+line_dscrlx:
+	.BYTE	$00
 
 ; Draw a single line at the current scroll position.
 ; INPUT:	B = Row of display to draw line on
@@ -109,27 +130,31 @@ line_draw_sgl:
 	stx	line_buf_ptr	; Store pointers to returned buffers
 	std	line_hsp_ptr
 
+	clra			; Clear scroll X pos for line_draw_scrlx
 	ldx	line_cury	; Check if cursor is on this line
 	cpx	line_dsgl_scrly	; If not, then don't cache it
 	bne	line_dsgl_nocache
 
 	ldx	line_buf_ptr	; Load line buffer's address into X
-	clra			; Read first (count) byte of line buffer
-	ldab	0,x
+	ldab	0,x		; Read count byte in line buffer (A already 0)
 	incb			; Increment to include count byte in length
+	cmpb	#128		; Don't cache line if longer than 128 chars
+	bhi	line_dsgl_end	; (Length > 128)
 	std	utw_s0		; Store buffer length in utw_s0
 	ldd	#line_buf_cache	; Destination is line buffer cache
 	os	ut$cpyb		; Copy line into cache
-	; TODO: Maybe add length check to prevent buffer overflow
 
 	ldx	line_hsp_ptr	; Load line buffer's address into X
 	clra			; Read first (count) byte of line buffer
 	ldab	0,x
 	incb			; Increment to include count byte in length
+	cmpb	#128		; Don't cache line if longer than 128 chars
+	bhi	line_dsgl_end	; (Length > 128)
 	std	utw_s0		; Store buffer length in utw_s0
 	ldd	#line_hsp_cache	; Destination is line hotspot cache
 	os	ut$cpyb		; Copy line into cache
-	; TODO: Maybe add length check to prevent buffer overflow
+
+	ldaa	line_scrlx	; Load line scroll X into A
 
 line_dsgl_nocache:
 	ldab	line_dsgl_row	; Load row into B
