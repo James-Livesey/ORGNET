@@ -119,7 +119,7 @@ line_dscrlx:
 ;		D = Trashed
 ;		X = Trashed
 line_draw_sgl:
-	stab	line_dsgl_row	; Save row for later
+	stab	line_dsgl_row	; Save display row for later
 	clra			; Get current scroll Y + display row offset
 	addd	line_scrly
 	std	line_dsgl_scrly	; Save scroll Y offset for later
