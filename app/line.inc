@@ -203,8 +203,87 @@ line_draw_all:
 ;		D = Trashed
 ;		X = Trashed
 line_show:
-	jsr	line_draw_all
+	jsr	line_draw_all	; Draw all lines
 
-	os	kb$getk
+line_show_getk:
+	os	kb$getk		; Wait for keypress
+	cmpb	#3		; Scroll up if UP key is pressed
+	beq	line_show_up
+	cmpb	#4		; Scroll down if DOWN key is pressed
+	beq	line_show_down
+	cmpb	#5		; Scroll left if LEFT key is pressed
+	beq	line_show_left
+	cmpb	#6		; Scroll right if RIGHT key is pressed
+	beq	line_show_right
 
+	clc			; Otherwise, return to caller
 	rts
+
+line_show_up:
+	ldx	line_cury	; Get current cursor Y position
+	cpx	#0		; Don't do anything if already at top
+	beq	line_show_getk	; (line_cury = 0)
+	dex			; Otherwise, decrement it
+	stx	line_cury	; Store it
+
+	clr	line_curx	; Reset cursor X position back to start
+	clr	line_scrlx	; Reset scroll X position back to start
+
+	cpx	line_scrly	; Decrement scroll Y position if required
+	bcc	line_show	; Skip if past scroll (line_cury >= line_scrly)
+	ldx	line_scrly	; Otherwise, scroll up one line
+	dex
+	stx	line_scrly
+
+	bra	line_show	; Redraw and get next key
+
+line_show_down:
+	ldx	line_cury	; Get current cursor Y position
+	inx			; Increment it
+	stx	line_cury	; Store it
+
+	clr	line_curx	; Reset cursor X position back to start
+	clr	line_scrlx	; Reset scroll X position back to start
+
+	ldd	line_scrly	; Increment scroll Y position if required
+	addd	#2
+	std	line_show_scrly
+	cpx	line_show_scrly
+	bcs	line_show	; Skip if not past (cury < scrly + rows)
+	ldx	line_scrly
+	inx
+	stx	line_scrly
+
+	bra	line_show	; Redraw and get next key
+
+line_show_scrly:
+	.WORD	$0000
+
+line_show_left:
+	ldaa	line_curx	; Get current cursor X position
+	cmpa	#0		; Don't do anything if already at start
+	beq	line_show_getk	; (line_curx = 0)
+	deca			; Otherwise, decrement it
+	staa	line_curx	; Store it
+
+	cmpa	line_scrlx	; Decrement scroll X position if required
+	bcc	line_show_cache	; Skip if past scroll (line_curx >= line_scrlx)
+	dec	line_scrlx	; Otherwise, scroll left one char
+
+	bra	line_show_cache	; Redraw and get next key
+
+line_show_right:
+	ldaa	line_curx	; Get current cursor X position
+	inca			; Increment it
+	staa	line_curx	; Store it
+
+	ldab	line_scrlx	; Increment scroll X position if required
+	addb	#16
+	cba
+	bcs	line_show_cache	; Skip if not past (curx < cury + cols)
+	inc	line_scrlx	; Otherwise, scroll right one char
+
+	bra	line_show_cache	; Redraw and get next key
+
+line_show_cache:
+	jmp	line_show	; TODO: Call line_draw_sgl instead

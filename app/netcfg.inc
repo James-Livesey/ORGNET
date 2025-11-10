@@ -289,6 +289,9 @@ netcfg_newcon:
 	rts
 
 netcfg_newcon_read_cbk:
+	addb	#$30		; Display index in line buffer
+	stab	int(netcfg_newcon_buf+10)
+
 	ldx	#netcfg_newcon_buf
 	ldd	#netcfg_newcon_hsp
 
@@ -296,7 +299,7 @@ netcfg_newcon_read_cbk:
 	rts
 
 netcfg_newcon_buf:
-	.ASCIC	"Testing"
+	.ASCIC	"Testing #0 ABCDEFGHIJ"
 
 netcfg_newcon_hsp:
 	.BYTE	$01
