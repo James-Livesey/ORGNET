@@ -96,17 +96,6 @@ line_dscrlx_ncp:
 	os	dp$prnt		; Print the line
 	tab			; Move A into B again
 
-line_dscrlx_fll:
-	cmpb	#16		; Don't fill rest of line if at end
-	bcc	line_dscrlx_end	; (Column counter >= 16)
-
-	ldaa	#$20		; Fill rest of line with spaces
-	os	dp$emit
-
-	incb			; Increment column counter
-
-	bra	line_dscrlx_fll	; Loop to continue filling line
-
 line_dscrlx_end:
 	rts
 
@@ -274,7 +263,11 @@ line_show_left:
 
 line_show_right:
 	ldaa	line_curx	; Get current cursor X position
-	inca			; Increment it
+	ldab	line_buf_cache	; Get length of current line
+	decb			; Decrement it to get last char's index
+	cba			; Don't do anything if about to scroll past end
+	bcc	line_show_getk	; (line_curx >= length - 1)
+	inca			; Otherwise, increment it
 	staa	line_curx	; Store it
 
 	ldab	line_scrlx	; Increment scroll X position if required
@@ -286,4 +279,8 @@ line_show_right:
 	bra	line_show_cache	; Redraw and get next key
 
 line_show_cache:
-	jmp	line_show	; TODO: Call line_draw_sgl instead
+	ldd	line_cury	; Subtract scroll Y from cursor Y to get row
+	subd	line_scrly
+	jsr	line_draw_sgl	; Redraw single line from cache
+
+	jmp	line_show_getk	; Get next key
