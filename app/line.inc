@@ -154,6 +154,7 @@ line_dsgl_nocache:
 	rts
 
 line_dsgl_end:
+	sec
 	rts
 
 line_dsgl_row:
@@ -195,6 +196,16 @@ line_show:
 	jsr	line_draw_all	; Draw all lines
 
 line_show_getk:
+	ldd	line_cury	; Get current cursor row (cursor Y - scroll Y)
+	subd	line_scrly
+	ldaa	#16		; Multiply by display column count
+	mul
+	tba
+	adda	line_curx	; Add current cursor col (cursor X - scroll X)
+	suba	line_scrlx
+	ldab	#$80		; Display cursor as block
+	os	dp$stat
+
 	os	kb$getk		; Wait for keypress
 	cmpb	#3		; Scroll up if UP key is pressed
 	beq	line_show_up
@@ -224,7 +235,7 @@ line_show_up:
 	dex
 	stx	line_scrly
 
-	bra	line_show	; Redraw and get next key
+	jmp	line_show	; Redraw and get next key
 
 line_show_down:
 	ldx	line_cury	; Get current cursor Y position
@@ -243,7 +254,7 @@ line_show_down:
 	inx
 	stx	line_scrly
 
-	bra	line_show	; Redraw and get next key
+	jmp	line_show	; Redraw and get next key
 
 line_show_scrly:
 	.WORD	$0000
@@ -251,12 +262,12 @@ line_show_scrly:
 line_show_left:
 	ldaa	line_curx	; Get current cursor X position
 	cmpa	#0		; Don't do anything if already at start
-	beq	line_show_getk	; (line_curx = 0)
+	beq	line_show_getk2	; (line_curx = 0)
 	deca			; Otherwise, decrement it
 	staa	line_curx	; Store it
 
 	cmpa	line_scrlx	; Decrement scroll X position if required
-	bcc	line_show_cache	; Skip if past scroll (line_curx >= line_scrlx)
+	bcc	line_show_getk2	; Skip if past scroll (line_curx >= line_scrlx)
 	dec	line_scrlx	; Otherwise, scroll left one char
 
 	bra	line_show_cache	; Redraw and get next key
@@ -266,14 +277,14 @@ line_show_right:
 	ldab	line_buf_cache	; Get length of current line
 	decb			; Decrement it to get last char's index
 	cba			; Don't do anything if about to scroll past end
-	bcc	line_show_getk	; (line_curx >= length - 1)
+	bcc	line_show_getk2	; (line_curx >= length - 1)
 	inca			; Otherwise, increment it
 	staa	line_curx	; Store it
 
 	ldab	line_scrlx	; Increment scroll X position if required
 	addb	#16
 	cba
-	bcs	line_show_cache	; Skip if not past (curx < cury + cols)
+	bcs	line_show_getk2	; Skip if not past (curx < cury + cols)
 	inc	line_scrlx	; Otherwise, scroll right one char
 
 	bra	line_show_cache	; Redraw and get next key
@@ -281,6 +292,9 @@ line_show_right:
 line_show_cache:
 	ldd	line_cury	; Subtract scroll Y from cursor Y to get row
 	subd	line_scrly
-	jsr	line_draw_sgl	; Redraw single line from cache
+	ldaa	line_scrlx	; Load line scroll X into A
+	ldx	#line_buf_cache	; Load line buffer cache's address into X
+	jsr	line_draw_scrlx	; Redraw single line from cache
 
+line_show_getk2:
 	jmp	line_show_getk	; Get next key
