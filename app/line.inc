@@ -75,7 +75,7 @@ line_draw_scrlx:
 
 	ldaa	#16		; Set cursor pos to start of given row
 	mul			; B = row * 16
-	tba			; Move B into A
+	tba
 	os	dp$stat
 
 	ldaa	0,x		; Get length of line
@@ -92,9 +92,9 @@ line_draw_scrlx:
 	ldaa	#16		; Set length to 16
 
 line_dscrlx_ncp:
-	tab			; Move A (line length) into B
+	tab			; Move line length into B
 	os	dp$prnt		; Print the line
-	tab			; Move A into B again
+	tab			; Move line length into B again
 
 line_dscrlx_end:
 	rts
