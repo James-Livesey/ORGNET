@@ -1,5 +1,5 @@
 # ORGNET
-A wireless networking peripheral for the Psion Organiser II.
+A wireless networking peripheral for the Psion Organiser II, in a datapack form factor.
 
 ## Getting the code
 This repository contains Git submodules that must be cloned to be able to assemble the ORGNET application's code and run an emulated Organiser II. To clone this repository, run:
