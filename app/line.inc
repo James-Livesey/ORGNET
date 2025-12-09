@@ -6,17 +6,10 @@
 ; contents of the line must be provided in a byte-counted buffer, and its
 ; address must be returned in X. Its maximum length must be 128 (including count
 ; byte).
-; A line may have hotspots, indicating elements which can be selected to pick an
-; option or activate a hyperlink. A list of hotspots must be provided in a byte-
-; counted buffer, and its address must be returned in D. Its maximum length must
-; be 128 (including count byte). This list must comprise of $01 bytes where
-; there is to be a hotspot at the same position in the line, or $00 where there
-; is to not be a hotspot.
 ; If a line at the given index does not exist, then C must be set. In this case,
 ; X and D do not need to be specified.
 ; INPUT:	D = Index of line to be read
 ; OUTPUT:	X = Address of byte-counted buffer containing line's contents
-;		D = Address of byte-counted buffer containing hotspots
 ;		C = Set if line does not exist (reached end)
 line_read_cbk:
 	.WORD	$0000
@@ -38,9 +31,6 @@ line_cury:
 	.WORD	$0000
 
 line_buf_cache:
-	.BLKB	128
-
-line_hsp_cache:
 	.BLKB	128
 
 ; Set up line renderer callbacks and reset scrolling.
@@ -114,10 +104,9 @@ line_draw_sgl:
 	std	line_dsgl_scrly	; Save scroll Y offset for later
 
 	ldx	line_read_cbk
-	jsr	0,x		; Get contents of line and hotspots
+	jsr	0,x		; Get contents of line buffer
 	bcs	line_dsgl_end	; Early exit if line does not exist
-	stx	line_buf_ptr	; Store pointers to returned buffers
-	std	line_hsp_ptr
+	stx	line_buf_ptr	; Store pointer to returned buffer
 
 	clra			; Clear scroll X pos for line_draw_scrlx
 	ldx	line_cury	; Check if cursor is on this line
@@ -131,16 +120,6 @@ line_draw_sgl:
 	bhi	line_dsgl_end	; (Length > 128)
 	std	utw_s0		; Store buffer length in utw_s0
 	ldd	#line_buf_cache	; Destination is line buffer cache
-	os	ut$cpyb		; Copy line into cache
-
-	ldx	line_hsp_ptr	; Load line buffer's address into X
-	clra			; Read first (count) byte of line buffer
-	ldab	0,x
-	incb			; Increment to include count byte in length
-	cmpb	#128		; Don't cache line if longer than 128 chars
-	bhi	line_dsgl_end	; (Length > 128)
-	std	utw_s0		; Store buffer length in utw_s0
-	ldd	#line_hsp_cache	; Destination is line hotspot cache
 	os	ut$cpyb		; Copy line into cache
 
 	ldaa	line_scrlx	; Load line scroll X into A
@@ -164,9 +143,6 @@ line_dsgl_scrly:
 	.WORD	$0000
 
 line_buf_ptr:
-	.WORD	$0000
-
-line_hsp_ptr:
 	.WORD	$0000
 
 ; Draw all lines at the current scroll position.

@@ -293,17 +293,12 @@ netcfg_newcon_read_cbk:
 	stab	int(netcfg_newcon_buf+10)
 
 	ldx	#netcfg_newcon_buf
-	ldd	#netcfg_newcon_hsp
 
 	clc
 	rts
 
 netcfg_newcon_buf:
 	.ASCIC	"Testing #0 ABCDEFGHIJ"
-
-netcfg_newcon_hsp:
-	.BYTE	$01
-	.BYTE	$00
 
 ; Display options to configure which built-in ORGNET apps are shown.
 ; INPUT:	None
