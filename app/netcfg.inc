@@ -289,12 +289,19 @@ netcfg_newcon:
 	rts
 
 netcfg_newcon_read_cbk:
+	cmpb	#10		; Signal end of line if after 10 lines
+	bcc	netcfg_newcon_noline
+
 	addb	#$30		; Display index in line buffer
 	stab	int(netcfg_newcon_buf+10)
 
 	ldx	#netcfg_newcon_buf
 
 	clc
+	rts
+
+netcfg_newcon_noline:
+	sec
 	rts
 
 netcfg_newcon_buf:

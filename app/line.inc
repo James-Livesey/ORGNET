@@ -105,7 +105,7 @@ line_draw_sgl:
 
 	ldx	line_read_cbk
 	jsr	0,x		; Get contents of line buffer
-	bcs	line_dsgl_end	; Early exit if line does not exist
+	bcs	line_dsgl_noln	; Clear line buffer cache if line does not exist
 	stx	line_buf_ptr	; Store pointer to returned buffer
 
 	clra			; Clear scroll X pos for line_draw_scrlx
@@ -132,6 +132,14 @@ line_dsgl_nocache:
 	clc
 	rts
 
+line_dsgl_noln:
+	ldx	line_cury	; Check if cursor is on this line
+	cpx	line_dsgl_scrly	; If not, then don't cache it
+	bne	line_dsgl_end
+
+	clra			; Store count byte of zero in line buffer cache
+	staa	line_buf_cache
+
 line_dsgl_end:
 	sec
 	rts
@@ -150,16 +158,35 @@ line_buf_ptr:
 ; OUTPUT:	None
 ;		D = Trashed
 ;		X = Trashed
+;		C = Set if cursor Y position is at end/last line
 line_draw_all:
 	ldaa	#$0C		; Clear screen
 	os	dp$emit
 
 	ldab	#0		; Draw top row
 	jsr	line_draw_sgl
+	bcs	line_dall_exit	; Early exit if line does not exist
 
 	ldab	#1		; Draw bottom row
 	jsr	line_draw_sgl
+	bcs	line_dall_exit	; Early exit if line does not exist
 
+	ldx	line_scrly	; Get last line index at current scroll pos
+	ldab	#1
+	abx
+	cpx	line_cury	; (line_scrly + 1 != line_cury)
+	bne	line_dall_ok	; Clear carry if cur not on last scroll line
+
+	ldd	#2		; Check if line after exists
+	addd	line_scrly	; Add scroll Y position to next off-screen row
+	ldx	line_read_cbk	; Get callback to test if line exists
+	jsr	0,x		; Call callback; carry set if does not exist
+
+line_dall_exit:
+	rts
+
+line_dall_ok:
+	clc
 	rts
 
 ; Show lines interactively and wait for an action. Must already be set up using
@@ -170,6 +197,8 @@ line_draw_all:
 ;		X = Trashed
 line_show:
 	jsr	line_draw_all	; Draw all lines
+	tpa			; Save carry to test if last line later
+	staa	line_show_dallr
 
 line_show_getk:
 	ldd	line_cury	; Get current cursor row (cursor Y - scroll Y)
@@ -214,6 +243,10 @@ line_show_up:
 	jmp	line_show	; Redraw and get next key
 
 line_show_down:
+	ldaa	line_show_dallr	; Check if carry was set when drawing all lines
+	tap
+	bcs	line_show_getk	; If set, reached end; don't increment cur Y pos
+
 	ldx	line_cury	; Get current cursor Y position
 	inx			; Increment it
 	stx	line_cury	; Store it
@@ -235,6 +268,9 @@ line_show_down:
 line_show_scrly:
 	.WORD	$0000
 
+line_show_dallr:
+	.BYTE	$00
+
 line_show_left:
 	ldaa	line_curx	; Get current cursor X position
 	cmpa	#0		; Don't do anything if already at start
@@ -251,7 +287,9 @@ line_show_left:
 line_show_right:
 	ldaa	line_curx	; Get current cursor X position
 	ldab	line_buf_cache	; Get length of current line
-	decb			; Decrement it to get last char's index
+	tstb			; (Length = 0)
+	beq	line_show_getk2	; Don't do anything if line is blank
+	decb			; Decrement length to get last char's index
 	cba			; Don't do anything if about to scroll past end
 	bcc	line_show_getk2	; (line_curx >= length - 1)
 	inca			; Otherwise, increment it
