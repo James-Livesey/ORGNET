@@ -30,6 +30,10 @@ line_curx:
 line_cury:
 	.WORD	$0000
 
+; Horizontal scroll enable flag
+line_scrlxen:
+	.BYTE	$01
+
 line_buf_cache:
 	.BLKB	128
 
@@ -45,6 +49,9 @@ line_begin:
 	std	line_scrly	; Reset scroll Y position
 	staa	line_curx	; Reset cursor X position
 	std	line_cury	; Reset cursor Y position
+
+	ldaa	#1
+	staa	line_scrlxen	; Reset horizontal scroll enable flag
 
 	rts
 
@@ -273,7 +280,7 @@ line_show_dallr:
 
 line_show_left:
 	ldaa	line_curx	; Get current cursor X position
-	cmpa	#0		; Don't do anything if already at start
+	tsta			; Don't do anything if already at start
 	beq	line_show_getk2	; (line_curx = 0)
 	deca			; Otherwise, decrement it
 	staa	line_curx	; Store it
@@ -285,10 +292,14 @@ line_show_left:
 	bra	line_show_cache	; Redraw and get next key
 
 line_show_right:
+	ldaa	line_scrlxen	; Determine if horizontal scrolling is enabled
+	tsta			; Don't do anything if flag not enabled
+	beq	line_show_getk2	; (line_scrlxen = 0)
+
 	ldaa	line_curx	; Get current cursor X position
 	ldab	line_buf_cache	; Get length of current line
-	tstb			; (Length = 0)
-	beq	line_show_getk2	; Don't do anything if line is blank
+	tstb			; Don't do anything if line is blank
+	beq	line_show_getk2	; (Length = 0)
 	decb			; Decrement length to get last char's index
 	cba			; Don't do anything if about to scroll past end
 	bcc	line_show_getk2	; (line_curx >= length - 1)
@@ -312,3 +323,14 @@ line_show_cache:
 
 line_show_getk2:
 	jmp	line_show_getk	; Get next key
+
+; Clear the horizontal scroll enable flag, to prevent horizontal scrolling.
+; To be called after line_begin, but before line_show.
+; INPUT:	None
+; OUTPUT:	None
+;		A = Trashed
+line_noscrlx:
+	clra
+	staa	line_scrlxen	; Reset horizontal scroll enable flag
+
+	rts

@@ -11,6 +11,7 @@ COMMS_WAIT	.EQU	8
 UDG		.EQU	9
 LINE_BEGIN	.EQU	10
 LINE_SHOW	.EQU	11
+LINE_NOSCRLX	.EQU	12
 
 jvec	.MACRO	vector
 	std	utw_s0		; Store D in utw_s0

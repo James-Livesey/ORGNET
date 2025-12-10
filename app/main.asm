@@ -43,6 +43,7 @@ vec:
 	.WORD	udg_vec
 	.WORD	line_begin_vec
 	.WORD	line_show
+	.WORD	line_noscrlx
 endvec:
 
 install:
