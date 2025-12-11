@@ -199,9 +199,9 @@ line_dall_ok:
 ; Show lines interactively and wait for an action. Must already be set up using
 ; line_begin before calling.
 ; INPUT:	None
-; OUTPUT:	None
-;		D = Trashed
-;		X = Trashed
+; OUTPUT:	A = Cursor X position when action was performed
+;		B = Key pressed to perform action
+;		X = Cursor Y position when action was performed
 line_show:
 	jsr	line_draw_all	; Draw all lines
 	tpa			; Save carry to test if last line later
@@ -228,7 +228,10 @@ line_show_getk:
 	cmpb	#6		; Scroll right if RIGHT key is pressed
 	beq	line_show_right
 
-	clc			; Otherwise, return to caller
+	ldaa	line_curx	; Load cursor X position as return value
+	ldx	line_cury	; Load cursor Y position as return value
+
+	clc			; If other keypress, return to caller
 	rts
 
 line_show_up:
