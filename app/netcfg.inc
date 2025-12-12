@@ -284,8 +284,17 @@ netcfg_newcon:
 	ldx	#netcfg_newcon_read_cbk
 	jvec	LINE_BEGIN
 
+netcfg_newcon_show:
 	jvec	LINE_SHOW
 
+	cmpb	#$01		; If ON/CLEAR, then return
+	beq	netcfg_newcon_exit
+	cmpb	#$0D		; If EXE, then return
+	beq	netcfg_newcon_exit
+
+	bra	netcfg_newcon_show
+
+netcfg_newcon_exit:
 	rts
 
 netcfg_newcon_read_cbk:
