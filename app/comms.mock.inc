@@ -264,7 +264,30 @@ comms_mock_wistat_res:
 	.BYTE	$02		; Connection strength
 	.ASCII	"Mock Test"	; SSID
 
+comms_mock_wilist_0_cmd:
+	.BYTE	9		; Command length
+	.ASCII	"WILIST "	; Command
+	.WORD	$0000		; Index parameter
+
+comms_mock_wilist_0_res:
+	.BYTE	12		; Response length
+	.BYTE	$02		; Connection strength
+	.BYTE	$00		; Security type
+	.ASCII	"First Mock"	; SSID
+
+comms_mock_wilist_1_cmd:
+	.BYTE	9		; Command length
+	.ASCII	"WILIST "	; Command
+	.WORD	$0001		; Index parameter
+
+comms_mock_wilist_1_res:
+	.BYTE	0		; Response length
+
 comms_mock_cmds:
 	.WORD	comms_mock_wistat_cmd
 	.WORD	comms_mock_wistat_res
+	.WORD	comms_mock_wilist_0_cmd
+	.WORD	comms_mock_wilist_0_res
+	.WORD	comms_mock_wilist_1_cmd
+	.WORD	comms_mock_wilist_1_res
 	.WORD	$0000
