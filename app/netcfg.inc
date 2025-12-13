@@ -4,6 +4,8 @@
 WISTATUS_DISCON	.EQU	$00
 WISTATUS_CON	.EQU	$01
 
+WISEC_OPEN	.EQU	$00
+
 .OVER netcfg
 
 netcfg_entry:
@@ -53,7 +55,7 @@ netcfg_wifi:
 	ldx	#netcfg_wistat_cmd
 	jvec	COMMS_WRITE	; Invoke WISTAT command
 
-	jvec	COMMS_WAIT	; Wait for reply and store SSID length from A
+	jvec	COMMS_WAIT	; Wait for reply and store SSID length from B
 	bcs	netcfg_wifi_err
 	decb			; Discount connection status byte in length
 	decb			; Discount signal strength byte in length
@@ -283,6 +285,7 @@ netcfg_wodisconmenu:
 netcfg_newcon:
 	ldx	#netcfg_newcon_read_cbk
 	jvec	LINE_BEGIN
+	jvec	LINE_NOSCRLX
 
 netcfg_newcon_show:
 	jvec	LINE_SHOW
@@ -298,23 +301,73 @@ netcfg_newcon_exit:
 	rts
 
 netcfg_newcon_read_cbk:
-	cmpb	#10		; Signal end of line if after 10 lines
-	bcc	netcfg_newcon_noline
+	std	netcfg_newcon_cmd_idx
 
-	addb	#$30		; Display index in line buffer
-	stab	int(netcfg_newcon_buf+10)
+	ldaa	#$20		; Fill display buffer with space chars
+	ldab	#16
+	ldx	#netcfg_newcon_disp+1
+	os	ut$fill
 
-	ldx	#netcfg_newcon_buf
+	jvec	COMMS_BEGIN	; Begin comms to get Wi-Fi list item
+	bcs	netcfg_newcon_end
+
+	ldab	netcfg_newcon_cmd
+	incb
+	ldx	#netcfg_newcon_cmd
+	jvec	COMMS_WRITE	; Invoke WISTAT command
+
+	jvec	COMMS_WAIT	; Wait for reply and store SSID length from B
+	bcs	netcfg_newcon_end
+	tstb			; Signal end if result is empty
+	beq	netcfg_newcon_end
+	decb			; Discount connection strength byte in length
+	decb			; Discount security type byte in length
+	stab	netcfg_newcon_reslen
+
+	cmpb	#15		; Don't cap SSID length if <= 15
+	bls	netcfg_newcon_ok
+
+	ldab	#15		; Limit length to 15 chars to fit buffer
+	stab	netcfg_newcon_reslen
+
+netcfg_newcon_ok:
+	jvec	COMMS_READ_BYTE	; Store con strength as last byte of disp buf
+	bcs	netcfg_newcon_end
+	stab	netcfg_newcon_disp+16
+
+	jvec	COMMS_READ_BYTE	; Ignore connection security type
+	bcs	netcfg_newcon_end
+
+	ldab	netcfg_newcon_reslen
+	ldx	#netcfg_newcon_disp+1
+	jvec	COMMS_READ	; Read SSID into display buffer
+	bcs	netcfg_newcon_end
+
+	ldx	#netcfg_newcon_disp
 
 	clc
 	rts
 
-netcfg_newcon_noline:
+netcfg_newcon_end:
 	sec
 	rts
 
-netcfg_newcon_buf:
-	.ASCIC	"Testing #0 ABCDEFGHIJ"
+netcfg_newcon_cmd:
+	.BYTE	9		; Command length
+	.ASCII	"WILIST "	; Command
+
+netcfg_newcon_cmd_idx:
+	.WORD	$0000		; Index parameter
+
+netcfg_newcon_reslen:
+	.BYTE	0
+
+netcfg_newcon_disp:
+	.BYTE	16		; Fixed length
+	.BLKB	16
+
+netcfg_newcon_last:
+	.ASCIC	"LAST"
 
 ; Display options to configure which built-in ORGNET apps are shown.
 ; INPUT:	None

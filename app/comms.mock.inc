@@ -270,7 +270,8 @@ comms_mock_wilist_0_cmd:
 	.WORD	$0000		; Index parameter
 
 comms_mock_wilist_0_res:
-	.BYTE	12		; Response length
+	.BYTE	13		; Response length
+	.BYTE	$01		; Response status
 	.BYTE	$02		; Connection strength
 	.BYTE	$00		; Security type
 	.ASCII	"First Mock"	; SSID
@@ -281,7 +282,32 @@ comms_mock_wilist_1_cmd:
 	.WORD	$0001		; Index parameter
 
 comms_mock_wilist_1_res:
-	.BYTE	0		; Response length
+	.BYTE	36		; Response length
+	.BYTE	$01		; Response status
+	.BYTE	$02		; Connection strength
+	.BYTE	$00		; Security type
+	.ASCII	"Second Mock With Really Long Name"	; SSID
+
+comms_mock_wilist_2_cmd:
+	.BYTE	9		; Command length
+	.ASCII	"WILIST "	; Command
+	.WORD	$0002		; Index parameter
+
+comms_mock_wilist_2_res:
+	.BYTE	13		; Response length
+	.BYTE	$01		; Response status
+	.BYTE	$02		; Connection strength
+	.BYTE	$00		; Security type
+	.ASCII	"Third Mock"	; SSID
+
+comms_mock_wilist_3_cmd:
+	.BYTE	9		; Command length
+	.ASCII	"WILIST "	; Command
+	.WORD	$0003		; Index parameter
+
+comms_mock_wilist_3_res:
+	.BYTE	1		; Response length
+	.BYTE	$01		; Response status
 
 comms_mock_cmds:
 	.WORD	comms_mock_wistat_cmd
@@ -290,4 +316,8 @@ comms_mock_cmds:
 	.WORD	comms_mock_wilist_0_res
 	.WORD	comms_mock_wilist_1_cmd
 	.WORD	comms_mock_wilist_1_res
+	.WORD	comms_mock_wilist_2_cmd
+	.WORD	comms_mock_wilist_2_res
+	.WORD	comms_mock_wilist_3_cmd
+	.WORD	comms_mock_wilist_3_res
 	.WORD	$0000
