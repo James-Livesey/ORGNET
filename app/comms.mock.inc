@@ -86,6 +86,7 @@ comms_read_vec:
 ; Read a single byte from the comms buffer at the current cursor location.
 ; INPUT:	None
 ; OUTPUT:	B = Byte read
+;		X = Trashed
 ;		C = Set if read would result in cursor exceeding buffer length
 comms_read_byte:
 	ldab	comms_cur
@@ -264,6 +265,14 @@ comms_mock_wistat_res:
 	.BYTE	$02		; Connection strength
 	.ASCII	"Mock Test"	; SSID
 
+comms_mock_wiscan_cmd:
+	.ASCIC	"WISCAN "
+
+comms_mock_wiscan_res:
+	.BYTE	4		; Response length
+	.BYTE	$01		; Response status
+	.WORD	3		; List item count
+
 comms_mock_wilist_0_cmd:
 	.BYTE	9		; Command length
 	.ASCII	"WILIST "	; Command
@@ -309,9 +318,20 @@ comms_mock_wilist_3_res:
 	.BYTE	1		; Response length
 	.BYTE	$01		; Response status
 
+comms_mock_wilist_4_cmd:
+	.BYTE	9		; Command length
+	.ASCII	"WILIST "	; Command
+	.WORD	$0004		; Index parameter
+
+comms_mock_wilist_4_res:
+	.BYTE	1		; Response length
+	.BYTE	$01		; Response status
+
 comms_mock_cmds:
 	.WORD	comms_mock_wistat_cmd
 	.WORD	comms_mock_wistat_res
+	.WORD	comms_mock_wiscan_cmd
+	.WORD	comms_mock_wiscan_res
 	.WORD	comms_mock_wilist_0_cmd
 	.WORD	comms_mock_wilist_0_res
 	.WORD	comms_mock_wilist_1_cmd
@@ -320,4 +340,6 @@ comms_mock_cmds:
 	.WORD	comms_mock_wilist_2_res
 	.WORD	comms_mock_wilist_3_cmd
 	.WORD	comms_mock_wilist_3_res
+	.WORD	comms_mock_wilist_4_cmd
+	.WORD	comms_mock_wilist_4_res
 	.WORD	$0000

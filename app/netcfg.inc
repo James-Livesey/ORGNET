@@ -283,9 +283,32 @@ netcfg_wodisconmenu:
 ; INPUT:	None
 ; OUTPUT:	None
 netcfg_newcon:
+	jvec	COMMS_BEGIN	; Begin comms to get Wi-Fi list length
+	bcs	netcfg_newcon_err
+
+	ldab	netcfg_wiscan_cmd
+	incb
+	ldx	#netcfg_wiscan_cmd
+	jvec	COMMS_WRITE	; Invoke WISCAN command
+
+	jvec	COMMS_WAIT	; Wait for reply
+	bcs	netcfg_newcon_err
+
+	jvec	COMMS_READ_BYTE	; Read and store length high byte
+	stab	netcfg_newcon_listlen
+	jvec	COMMS_READ_BYTE	; Read and store length low byte
+	stab	netcfg_newcon_listlen_low
+
 	ldx	#netcfg_newcon_read_cbk
 	jvec	LINE_BEGIN
 	jvec	LINE_NOSCRLX
+
+	bra	netcfg_newcon_show
+
+netcfg_newcon_err:
+	ldab	#ERROR_COMMS
+	jvec	ERROR_SHOW	; Show error message and exit subroutine
+	rts
 
 netcfg_newcon_show:
 	jvec	LINE_SHOW
@@ -301,7 +324,12 @@ netcfg_newcon_exit:
 	rts
 
 netcfg_newcon_read_cbk:
-	std	netcfg_newcon_cmd_idx
+	std	netcfg_wilist_cmd_idx
+
+	; If index is last, then display last item
+	ldx	netcfg_wilist_cmd_idx
+	cpx	netcfg_newcon_listlen
+	beq	netcfg_newcon_end
 
 	ldaa	#$20		; Fill display buffer with space chars
 	ldab	#16
@@ -309,17 +337,17 @@ netcfg_newcon_read_cbk:
 	os	ut$fill
 
 	jvec	COMMS_BEGIN	; Begin comms to get Wi-Fi list item
-	bcs	netcfg_newcon_end
+	bcs	netcfg_newcon_noline
 
-	ldab	netcfg_newcon_cmd
+	ldab	netcfg_wilist_cmd
 	incb
-	ldx	#netcfg_newcon_cmd
+	ldx	#netcfg_wilist_cmd
 	jvec	COMMS_WRITE	; Invoke WISTAT command
 
 	jvec	COMMS_WAIT	; Wait for reply and store SSID length from B
-	bcs	netcfg_newcon_end
+	bcs	netcfg_newcon_noline
 	tstb			; Signal end if result is empty
-	beq	netcfg_newcon_end
+	beq	netcfg_newcon_noline
 	decb			; Discount connection strength byte in length
 	decb			; Discount security type byte in length
 	stab	netcfg_newcon_reslen
@@ -332,16 +360,16 @@ netcfg_newcon_read_cbk:
 
 netcfg_newcon_ok:
 	jvec	COMMS_READ_BYTE	; Store con strength as last byte of disp buf
-	bcs	netcfg_newcon_end
+	bcs	netcfg_newcon_noline
 	stab	netcfg_newcon_disp+16
 
 	jvec	COMMS_READ_BYTE	; Ignore connection security type
-	bcs	netcfg_newcon_end
+	bcs	netcfg_newcon_noline
 
 	ldab	netcfg_newcon_reslen
 	ldx	#netcfg_newcon_disp+1
 	jvec	COMMS_READ	; Read SSID into display buffer
-	bcs	netcfg_newcon_end
+	bcs	netcfg_newcon_noline
 
 	ldx	#netcfg_newcon_disp
 
@@ -349,15 +377,30 @@ netcfg_newcon_ok:
 	rts
 
 netcfg_newcon_end:
+	ldx	#netcfg_newcon_last
+
+	clc
+	rts
+
+netcfg_newcon_noline:
 	sec
 	rts
 
-netcfg_newcon_cmd:
+netcfg_wiscan_cmd:
+	.ASCIC	"WISCAN "
+
+netcfg_wilist_cmd:
 	.BYTE	9		; Command length
 	.ASCII	"WILIST "	; Command
 
-netcfg_newcon_cmd_idx:
+netcfg_wilist_cmd_idx:
 	.WORD	$0000		; Index parameter
+
+netcfg_newcon_listlen:
+	.BYTE	0
+
+netcfg_newcon_listlen_low:
+	.BYTE	0
 
 netcfg_newcon_reslen:
 	.BYTE	0
@@ -367,7 +410,7 @@ netcfg_newcon_disp:
 	.BLKB	16
 
 netcfg_newcon_last:
-	.ASCIC	"LAST"
+	.ASCIC	"ADD NETWORK"
 
 ; Display options to configure which built-in ORGNET apps are shown.
 ; INPUT:	None

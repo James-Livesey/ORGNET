@@ -97,6 +97,7 @@ comms_read_vec:
 ; Read a single byte from the comms buffer at the current cursor location.
 ; INPUT:	None
 ; OUTPUT:	B = Byte read
+;		X = Trashed
 ;		C = Set if read would result in cursor exceeding buffer length
 comms_read_byte:
 	ldab	comms_cur
