@@ -282,6 +282,8 @@ netcfg_wodisconmenu:
 ; Show a list of SSIDs for nearby Wi-Fi access points to connect to.
 ; INPUT:	None
 ; OUTPUT:	None
+;		D = Trashed
+;		X = Trashed
 netcfg_newcon:
 	jvec	COMMS_BEGIN	; Begin comms to get Wi-Fi list length
 	bcs	netcfg_newcon_err
@@ -315,12 +317,24 @@ netcfg_newcon_show:
 
 	cmpb	#$01		; If ON/CLEAR, then return
 	beq	netcfg_newcon_exit
-	cmpb	#$0D		; If EXE, then return
-	beq	netcfg_newcon_exit
+	cmpb	#$0D		; If EXE, then perform selected action
+	beq	netcfg_newcon_sel
 
 	bra	netcfg_newcon_show
 
+netcfg_newcon_sel:
+	cpx	netcfg_newcon_listlen
+	beq	netcfg_newcon_getssid
+
 netcfg_newcon_exit:
+	rts
+
+netcfg_newcon_getssid:
+	jsr	netcfg_getssid	; Input SSID; return to list if cancelled
+	bcs	netcfg_newcon_show
+
+	ins			; Return, exiting wiopts menu at same time
+	ins
 	rts
 
 netcfg_newcon_read_cbk:
@@ -411,6 +425,42 @@ netcfg_newcon_disp:
 
 netcfg_newcon_last:
 	.ASCIC	"ADD NETWORK"
+
+; Ask the user to type in the SSID for the network to connect to.
+; INPUT:	None
+; OUTPUT:	None
+;		D = Trashed
+;		X = Trashed
+;		C = Set if operation has been cancelled
+netcfg_getssid:
+	ldaa	#$0C		; Clear screen
+	os	dp$emit
+
+	ldab	netcfg_getssid_prompt
+	ldx	#netcfg_getssid_prompt+1
+	os	dp$prnt		; Print prompt to screen
+
+	ldaa	#16		; Set cursor pos on second line
+	ldab	#0
+	os	dp$stat
+
+	ldaa	#$80		; Ignore MODE key presses
+	ldab	#32		; Max SSID length is 32
+	clr	rtb_bl		; Clear runtime buffer length
+	os	ed$edit		; Edit SSID line
+
+	cmpb	#$0D		; Cancel if exit key is not EXE
+	bne	netcfg_getssid_cancel
+
+	clc
+	rts
+
+netcfg_getssid_cancel:
+	sec
+	rts
+
+netcfg_getssid_prompt:
+	.ASCIC	"SSID?"
 
 ; Display options to configure which built-in ORGNET apps are shown.
 ; INPUT:	None
