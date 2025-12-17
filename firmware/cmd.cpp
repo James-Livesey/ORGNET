@@ -1,20 +1,32 @@
 #include "cmd.h"
 
 std::vector<Command> availableCommands = {
-    Command("WISTAT", []() -> CommsBuffer {
+    Command("WISTAT", [](CommandArguments args) -> CommsBuffer {
         static int variant = 1;
         std::string response;
 
         switch (variant) {
             case 0: response = std::string("\x00\x00", 2); break;
-            case 1: response = std::string("\x01\x00" "Hello SSID", 12); break;
-            case 2: response = std::string("\x01\x01" "SSID With A Really Long Name", 30); break;
-            case 3: response = std::string("\x01\x02" "Test Network", 14); break;
+            case 1: response = std::string("\x01\x00", 2) + "Hello SSID"; break;
+            case 2: response = std::string("\x01\x01", 2) + "SSID With A Really Long Name"; break;
+            case 3: response = std::string("\x01\x02", 2) + "Test Network"; break;
         }
 
         variant = (variant + 1) % 4;
 
         return stringBuffer(ReturnCode::SUCCESS, response);
+    }),
+    Command("WISCAN", [](CommandArguments args) -> CommsBuffer {
+        return stringBuffer(ReturnCode::SUCCESS, std::string("\x00\x04", 2));
+    }),
+    Command("WILIST", [](CommandArguments args) -> CommsBuffer {
+        switch (args[1]) {
+            case 0: return stringBuffer(ReturnCode::SUCCESS, std::string("\x02\x00", 2) + "Test Network");
+            case 1: return stringBuffer(ReturnCode::SUCCESS, std::string("\x01\x00", 2) + "SSID With A Really Long Name");
+            case 2: return stringBuffer(ReturnCode::SUCCESS, std::string("\x01\x00", 2) + "Hello Sebberino");
+            case 3: return stringBuffer(ReturnCode::SUCCESS, std::string("\x00\x00", 2) + "Hello SSID");
+            default: return stringBuffer(ReturnCode::SUCCESS, "");
+        }
     })
 };
 
@@ -23,8 +35,12 @@ Command::Command(std::string name, CommandCallback callback) {
     _callback = callback;
 }
 
-CommsBuffer Command::call() {
-    return _callback();
+const std::string Command::getName() {
+    return _name;
+}
+
+CommsBuffer Command::call(CommandArguments args) {
+    return _callback(args);
 }
 
 bool Command::matches(CommsBuffer* buffer) {
@@ -38,7 +54,9 @@ bool Command::matches(CommsBuffer* buffer) {
 void processCommand(CommsBuffer* buffer) {
     for (Command& command : availableCommands) {
         if (command.matches(buffer)) {
-            CommsBuffer result = command.call();
+            size_t argsOffset = command.getName().length() + 2;
+            CommandArguments args(buffer->data() + argsOffset, buffer->size() - argsOffset);
+            CommsBuffer result = command.call(args);
 
             std::copy(result.begin(), result.end(), buffer->begin());
             break;

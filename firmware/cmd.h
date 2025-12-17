@@ -4,10 +4,12 @@
 #include <string>
 #include <functional>
 #include <vector>
+#include <span>
 
 #include "datapack.h"
 
-typedef std::function<CommsBuffer()> CommandCallback;
+typedef std::span<char> CommandArguments;
+typedef std::function<CommsBuffer(CommandArguments)> CommandCallback;
 
 enum ReturnCode {
     SUCCESS = 1,
@@ -18,8 +20,10 @@ class Command {
     public:
         Command(std::string name, CommandCallback callback);
 
+        const std::string getName();
+
         bool matches(CommsBuffer* buffer);
-        CommsBuffer call();
+        CommsBuffer call(CommandArguments args);
 
     private:
         std::string _name;

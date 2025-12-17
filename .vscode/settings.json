@@ -7,5 +7,7 @@
     "[platformio-debug.asm]": {
         "editor.tabSize": 8,
         "editor.insertSpaces": false
-    }
+    },
+    "cmake.sourceDirectory": "/home/james/Code/Personal/ORGNET/firmware",
+    "C_Cpp.default.cppStandard": "c++20"
 }
