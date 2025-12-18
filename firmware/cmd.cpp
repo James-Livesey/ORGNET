@@ -1,6 +1,12 @@
 #include "cmd.h"
 
-std::vector<Command> availableCommands = {
+CommsBuffer stringBuffer(ReturnCode returnCode, std::string data);
+uint16_t fromWord(std::string word);
+std::string toWord(uint16_t value);
+
+std::vector<WifiAccessPoint> currentAccessPoints;
+
+std::vector<Command> cmd::availableCommands = {
     Command("WISTAT", [](CommandArguments args) -> CommsBuffer {
         static int variant = 1;
         std::string response;
@@ -17,16 +23,20 @@ std::vector<Command> availableCommands = {
         return stringBuffer(ReturnCode::SUCCESS, response);
     }),
     Command("WISCAN", [](CommandArguments args) -> CommsBuffer {
-        return stringBuffer(ReturnCode::SUCCESS, std::string("\x00\x04", 2));
+        currentAccessPoints = wifi::accessPoints;
+
+        return stringBuffer(ReturnCode::SUCCESS, toWord(currentAccessPoints.size()));
     }),
     Command("WILIST", [](CommandArguments args) -> CommsBuffer {
-        switch (args[1]) {
-            case 0: return stringBuffer(ReturnCode::SUCCESS, std::string("\x02\x00", 2) + "Test Network");
-            case 1: return stringBuffer(ReturnCode::SUCCESS, std::string("\x01\x00", 2) + "SSID With A Really Long Name");
-            case 2: return stringBuffer(ReturnCode::SUCCESS, std::string("\x01\x00", 2) + "Hello Sebberino");
-            case 3: return stringBuffer(ReturnCode::SUCCESS, std::string("\x00\x00", 2) + "Hello SSID");
-            default: return stringBuffer(ReturnCode::SUCCESS, "");
+        size_t index = fromWord(std::string {args[0], args[1]});
+
+        if (index >= currentAccessPoints.size()) {
+            return stringBuffer(ReturnCode::SUCCESS, "");
         }
+
+        WifiAccessPoint ap = currentAccessPoints[index];
+
+        return stringBuffer(ReturnCode::SUCCESS, std::string {ap.getStrength(), (char)ap.getSecurityMode()} + ap.getSsid());
     })
 };
 
@@ -51,8 +61,8 @@ bool Command::matches(CommsBuffer* buffer) {
     );
 }
 
-void processCommand(CommsBuffer* buffer) {
-    for (Command& command : availableCommands) {
+void cmd::processCommand(CommsBuffer* buffer) {
+    for (Command& command : cmd::availableCommands) {
         if (command.matches(buffer)) {
             size_t argsOffset = command.getName().length() + 2;
             CommandArguments args(buffer->data() + argsOffset, buffer->size() - argsOffset);
@@ -75,4 +85,12 @@ CommsBuffer stringBuffer(ReturnCode returnCode, std::string data) {
     std::copy(data.begin(), data.end(), buffer.begin() + 2);
 
     return buffer;
+}
+
+uint16_t fromWord(std::string word) {
+    return (word[0] << 8) | word[1];
+}
+
+std::string toWord(uint16_t value) {
+    return {(char)((value >> 8) & 0xFF), (char)(value & 0xFF)};
 }

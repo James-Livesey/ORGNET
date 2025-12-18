@@ -7,6 +7,7 @@
 #include <span>
 
 #include "datapack.h"
+#include "wifi.h"
 
 typedef std::span<char> CommandArguments;
 typedef std::function<CommsBuffer(CommandArguments)> CommandCallback;
@@ -30,10 +31,10 @@ class Command {
         CommandCallback _callback;
 };
 
-extern std::vector<Command> availableCommands;
-
-void processCommand(CommsBuffer* buffer);
-
-CommsBuffer stringBuffer(ReturnCode returnCode, std::string data);
+namespace cmd {
+    extern std::vector<Command> availableCommands;
+    
+    void processCommand(CommsBuffer* buffer);
+}
 
 #endif

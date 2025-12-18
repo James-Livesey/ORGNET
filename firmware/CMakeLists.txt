@@ -13,9 +13,15 @@ file(GLOB SOURCES
     ${CMAKE_SOURCE_DIR}/*.cpp
 )
 
+include_directories(${CMAKE_SOURCE_DIR})
+
 add_executable(orgnet ${SOURCES})
 
-target_link_libraries(orgnet pico_stdlib pico_multicore)
+target_link_libraries(orgnet
+    pico_stdlib
+    pico_multicore
+    pico_cyw43_arch_lwip_threadsafe_background
+)
 
 pico_enable_stdio_usb(orgnet 1)
 pico_enable_stdio_uart(orgnet 0)
