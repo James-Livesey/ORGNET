@@ -8,6 +8,7 @@
         "editor.tabSize": 8,
         "editor.insertSpaces": false
     },
-    "cmake.sourceDirectory": "/home/james/Code/Personal/ORGNET/firmware",
+    "cmake.sourceDirectory": "${workspaceFolder}/firmware",
+    "cmake.buildDirectory": "${workspaceFolder}/firmware/build",
     "C_Cpp.default.cppStandard": "c++20"
 }
