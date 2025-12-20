@@ -333,7 +333,7 @@ netcfg_newcon_getssid:
 	jsr	netcfg_getssid	; Input SSID; return to list if cancelled
 	bcs	netcfg_newcon_show
 
-	ins			; Return, exiting wiopts menu at same time
+	ins			; Return, exiting Wi-Fi opts menu at same time
 	ins
 	rts
 
