@@ -17,7 +17,7 @@ To build ORGNET's firmware and application, run:
 
 Running this script without any arguments will also upload the firmware and application build to the RP2350 over USB.
 
-To test ORGNET's application in the emulator, run:
+To test ORGNET's application in an emulator, run:
 
 ```bash
 pushd app; ./build.sh --test; popd
