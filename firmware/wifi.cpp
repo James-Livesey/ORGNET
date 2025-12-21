@@ -2,6 +2,7 @@
 
 std::vector<WifiAccessPoint> wifi::accessPoints;
 std::list<WifiAccessPoint> incomingAccessPoints;
+bool ready = false;
 
 WifiAccessPoint::WifiAccessPoint(const cyw43_ev_scan_result_t* scanResult) {
     _ssid = std::string((char*)scanResult->ssid, scanResult->ssid_len);
@@ -35,14 +36,22 @@ int wifiScanCallback(void* env, const cyw43_ev_scan_result_t* result) {
 }
 
 void wifi::init() {
+    if (ready) {
+        return;
+    }
+
     if (cyw43_arch_init()) {
         return;
     }
 
     cyw43_arch_enable_sta_mode();
+
+    ready = true;
 }
 
 void wifi::scan() {
+    wifi::init();
+
     cyw43_arch_lwip_begin();
 
     if (cyw43_wifi_scan_active(&cyw43_state)) {

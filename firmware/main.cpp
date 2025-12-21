@@ -26,9 +26,7 @@ int main() {
 
     datapack->loadCode((char*)appCode, appCode_len);
 
-    wifi::init();
-
-    set_sys_clock_khz(260'000, true);
+    set_sys_clock_khz(250'000, true);
     irq_set_mask_enabled(0x0F, false);
     multicore_launch_core1(stepper);
 
