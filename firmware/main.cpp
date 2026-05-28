@@ -6,7 +6,7 @@
 #include "datapack.h"
 #include "cmd.h"
 #include "wifi.h"
-#include "_app.h"
+#include "_service.h"
 
 #define WIFI_SCAN_INTERVAL 3000
 
@@ -24,7 +24,7 @@ int main() {
 
     datapack = Datapack::the();
 
-    datapack->loadCode((char*)appCode, appCode_len);
+    datapack->loadCode((char*)serviceCode, serviceCode_len);
 
     set_sys_clock_khz(250'000, true);
     irq_set_mask_enabled(0x0F, false);
