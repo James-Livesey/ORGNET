@@ -29,5 +29,5 @@ pushd build
 
     cmake .. -DPICO_BOARD=pico2_w
     make orgnet
-    # sudo picotool-local/picotool load -v -x orgnet.uf2 -f
+    sudo picotool-local/picotool load -v -x orgnet.uf2 -f
 popd
