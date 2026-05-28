@@ -27,14 +27,14 @@ hardware/#auto_saved_files#
 firmware/build
 firmware/_*
 
-# Application
+# Service
 
-app/*.hex
-app/*.bin
-app/*.dbg
-app/*.lst
-app/*.lst.short
-app/*.mac
-app/*.opl_*
-app/*.opk
-app/*.rom
+service/*.hex
+service/*.bin
+service/*.dbg
+service/*.lst
+service/*.lst.short
+service/*.mac
+service/*.opl_*
+service/*.opk
+service/*.rom
