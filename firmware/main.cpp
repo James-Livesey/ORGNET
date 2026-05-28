@@ -24,7 +24,7 @@ int main() {
 
     datapack = Datapack::the();
 
-    datapack->loadCode((char*)serviceCode, serviceCode_len);
+    datapack->loadCode((char*)serviceCode + 6, serviceCode_len - 6); // Truncating 6 bytes to remove OPK header
 
     set_sys_clock_khz(250'000, true);
     irq_set_mask_enabled(0x0F, false);

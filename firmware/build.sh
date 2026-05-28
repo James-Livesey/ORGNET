@@ -9,7 +9,7 @@ if [ ! -f ../service/main.bin ]; then
     exit 1
 fi
 
-xxd -n serviceCode -i ../service/main.bin > _service.h
+xxd -n serviceCode -i ../service/main.opk > _service.h
 
 pushd build
     if [ ! -f picotool-local/picotool ]; then
@@ -21,13 +21,13 @@ pushd build
     fi
 
     export PICO_SDK_PATH=../lib/pico-sdk
-    export ORGNET_BOARD_DEST=../lib/pico-sdk/src/boards/include/boards/orgnet.h
+    # export ORGNET_BOARD_DEST=../lib/pico-sdk/src/boards/include/boards/orgnet.h
 
-    if ! [ -f $ORGNET_BOARD_DEST ]; then
-        cp ../board.h ../lib/pico-sdk/src/boards/include/boards/orgnet.h
-    fi
+    # if ! [ -f $ORGNET_BOARD_DEST ]; then
+    #     cp ../board.h ../lib/pico-sdk/src/boards/include/boards/orgnet.h
+    # fi
 
-    cmake .. -DPICO_BOARD=orgnet
+    cmake .. -DPICO_BOARD=pico2_w
     make orgnet
     # sudo picotool-local/picotool load -v -x orgnet.uf2 -f
 popd
