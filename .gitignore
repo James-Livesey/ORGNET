@@ -38,3 +38,4 @@ service/*.mac
 service/*.opl_*
 service/*.opk
 service/*.rom
+service/toolchain/devkit

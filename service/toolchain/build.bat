@@ -1,0 +1,5 @@
+MOUNT A toolchain/devkit
+A:
+
+OPLTRAN -x -t RES\HELLO.OPL
+BLDPACK @RES\ORGNET

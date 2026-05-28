@@ -16,7 +16,24 @@ toolchain/psion-org2-assembler/org2asm.tcl -f $FILE
 
 echo ".INCLUDE comms.real.inc" > comms.inc
 
-python3 toolchain/makeopk.py $BIN_FILE $OPK_FILE
+if [ ! -f toolchain/devkit/BLDPACK.EXE ]; then
+    mkdir -p toolchain/devkit
+
+    pushd toolchain/devkit
+        wget https://www.jaapsch.net/psion/software/pc2/devkit.zip
+        unzip devkit.zip
+    popd
+fi
+
+mkdir -p toolchain/devkit/RES
+cp toolchain/build.bat toolchain/devkit/RES/BUILD.BAT
+cp main.bin toolchain/devkit/RES/MAIN.BIN
+cp orgnet.bld toolchain/devkit/RES/ORGNET.BLD
+cp ../app/* toolchain/devkit/RES/
+
+dosbox -exit toolchain/devkit/RES/BUILD.BAT
+
+cp toolchain/devkit/ORGNET.OPK $OPK_FILE
 
 if [ "$1" = "--test" ]; then
     if [ ! -f toolchain/Psiora/psiora ]; then

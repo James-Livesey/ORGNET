@@ -2,7 +2,12 @@
 .INCLUDE MOSHEAD.INC
 .INCLUDE MSWI.INC
 
-.ORG $241B-25
+.ORG $241B-31
+
+head:
+	.ASCII	"ORG"
+	.WORD	%prgend-%xx
+	.BYTE	$FF
 
 xx:
 	.BYTE	$6C		; Bootable; paged; RAM-based
@@ -12,7 +17,7 @@ xx:
 	.BYTE	$10		; Version 1.0
 	.BYTE	$41		; Priority
 	.WORD	%root-%xx	; Device overlay address
-	.WORD	int(0x6C04+0x0041+0x1041+%root-%xx)	; Checksum
+	.WORD	$FFFF		; Checksum
 	.BYTE	$09
 	.BYTE	$81
 	.ASCII	"MAIN    "
@@ -88,7 +93,7 @@ remove_msg:
 	.ASCIC	"Remove vector"
 
 language:
-	clc			; Return success signal
+	sec			; Return not-handled signal
 	rts
 
 old_kbb_pkof:
