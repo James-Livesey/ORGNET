@@ -35,6 +35,9 @@ dosbox -exit toolchain/devkit/RES/BUILD.BAT
 
 cp toolchain/devkit/ORGNET.OPK $OPK_FILE
 
+# Ensure pack type is set to be RAM-based
+printf "\x6C" | dd of=$OPK_FILE bs=1 seek=6 count=1 conv=notrunc
+
 if [ "$1" = "--test" ]; then
     if [ ! -f toolchain/Psiora/psiora ]; then
         pushd toolchain/Psiora

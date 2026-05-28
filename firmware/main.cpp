@@ -2,6 +2,7 @@
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
 #include "hardware/clocks.h"
+#include "hardware/vreg.h"
 
 #include "datapack.h"
 #include "cmd.h"
@@ -26,9 +27,12 @@ int main() {
 
     datapack->loadCode((char*)serviceCode + 6, serviceCode_len - 6); // Truncating 6 bytes to remove OPK header
 
+    vreg_set_voltage(VREG_VOLTAGE_1_30);
     set_sys_clock_khz(250'000, true);
-    irq_set_mask_enabled(0x0F, false);
+    // irq_set_mask_enabled(0x0F, false);
     multicore_launch_core1(stepper);
+
+    lastWifiScan = time_us_64();
 
     while (true) {
         if (datapack->hasAvailableCommand()) {

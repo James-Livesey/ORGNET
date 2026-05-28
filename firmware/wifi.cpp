@@ -54,7 +54,11 @@ void wifi::scan() {
 
     cyw43_arch_lwip_begin();
 
+    cyw43_arch_poll();
+
     if (cyw43_wifi_scan_active(&cyw43_state)) {
+        cyw43_arch_lwip_end();
+
         return;
     }
 
