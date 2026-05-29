@@ -2,17 +2,26 @@
 
 set -e
 
+TEST=false
 FILE=main.asm
 BIN_FILE=${FILE%.*}.bin
 OPK_FILE=${FILE%.*}.opk
 
 if [ "$1" = "--test" ]; then
+    TEST=true
+
     echo ".INCLUDE comms.mock.inc" > comms.inc
+
+    shift
 else
     echo ".INCLUDE comms.real.inc" > comms.inc
 fi
 
-toolchain/psion-org2-assembler/org2asm.tcl -f $FILE
+if [ "$1" == "--skip-asm" ]; then
+    shift
+else
+    toolchain/psion-org2-assembler/org2asm.tcl -f $FILE
+fi
 
 echo ".INCLUDE comms.real.inc" > comms.inc
 
@@ -35,7 +44,7 @@ dosbox -exit toolchain/devkit/RES/BUILD.BAT
 
 cp toolchain/devkit/ORGNET.OPK $OPK_FILE
 
-if [ "$1" = "--test" ]; then
+if $TEST; then
     if [ ! -f toolchain/Psiora/psiora ]; then
         pushd toolchain/Psiora
             qmake psiora.pro

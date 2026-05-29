@@ -26,14 +26,4 @@ apps_rm_tl:
 
 apps_netcfg_tl:
 	.ASCIC	"NETCFG"
-	.WORD	apps_netcfg_vec
-
-apps_netcfg_vec:
-	ldx	#%netcfg-%xx	; Load app from overlay to stack and execute it
-	ldd	#%netcfgend-%netcfg
-	jsr	appldr_load
-
-	jsr	appldr_unload	; Unload it from language stack when finished
-
-	clc
-	rts
+	.WORD	0
